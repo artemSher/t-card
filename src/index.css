@@ -1,0 +1,64 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Mont:Regular';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Mont Regular'), local('Mont-Regular');
+}
+@font-face {
+  font-family: 'Mont:SemiBold';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Mont SemiBold'), local('Mont-SemiBold');
+}
+@font-face {
+  font-family: 'Mont:Bold';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Mont Bold'), local('Mont-Bold');
+}
+@font-face {
+  font-family: 'Mont:Light';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: local('Mont Light'), local('Mont-Light');
+}
+@font-face {
+  font-family: 'SF Pro Rounded:Medium';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://static.figma.com/font/SF-Pro-Rounded-Medium_1') format('woff2');
+}
+@font-face {
+  font-family: 'SF Pro Rounded:Semibold';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('https://static.figma.com/font/SF-Pro-Rounded-Semibold_1') format('woff2');
+}
+@font-face {
+  font-family: 'SF Pro:Semibold';
+  font-style: normal;
+  font-weight: 590;
+  font-display: swap;
+  src: url('https://static.figma.com/font/SF-Pro_1') format('woff2');
+}
+
+/* Mont fallback stacks */
+.font-mont-regular { font-family: 'Mont:Regular', 'Nunito', system-ui, sans-serif; font-weight: 400; }
+.font-mont-semibold { font-family: 'Mont:SemiBold', 'Nunito', system-ui, sans-serif; font-weight: 600; }
+.font-mont-bold { font-family: 'Mont:Bold', 'Nunito', system-ui, sans-serif; font-weight: 700; }
+
+@theme {
+  --font-sans: 'Mont:Regular', 'Nunito', system-ui, sans-serif;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
