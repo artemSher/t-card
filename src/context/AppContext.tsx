@@ -19,6 +19,7 @@ interface AppContextValue {
   removeApplication: (id: number) => void;
   resumes: Resume[];
   addResume: (r: Resume) => void;
+  updateResume: (r: Resume) => void;
   savedSearches: SavedSearch[];
   addSavedSearch: (s: SavedSearch) => void;
   toggleSavedSearchNotifications: (id: number) => void;
@@ -53,6 +54,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setResumes(prev => [...prev, r]);
   }, [setResumes]);
 
+  const updateResume = useCallback((r: Resume) => {
+    setResumes(prev => prev.map(item => item.id === r.id ? r : item));
+  }, [setResumes]);
+
   const addSavedSearch = useCallback((s: SavedSearch) => {
     setSavedSearches(prev => [...prev, s]);
   }, [setSavedSearches]);
@@ -74,7 +79,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       settings, setSettings,
       bookmarks, toggleBookmark,
       applications, addApplication, removeApplication,
-      resumes, addResume,
+      resumes, addResume, updateResume,
       savedSearches, addSavedSearch, toggleSavedSearchNotifications,
       logout,
     }}>

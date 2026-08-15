@@ -167,7 +167,7 @@ export function EmployerHome() {
               {MOCK_COMPANY.verified && <Icon.Verified size={18} />}
             </div>
             <div style={{ fontFamily: F.regular, fontSize: 13, color: "rgba(255,255,255,0.8)", marginTop: 4 }}>
-              {MOCK_COMPANY.industry} · {MOCK_COMPANY.size} · Рейтинг {MOCK_COMPANY.rating}
+              {MOCK_COMPANY.industry} · Рейтинг {MOCK_COMPANY.rating}
             </div>
           </div>
           <button onClick={() => navigate("/employer/company")} style={{

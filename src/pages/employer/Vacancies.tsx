@@ -512,13 +512,12 @@ export function EmployerVacancyEditor() {
           </div>
           <Input label="Город" value={city} onChange={setCity} />
           <Select label="Опыт работы" value={experience} onChange={setExperience}
-            options={["Без опыта", "Опыт 1 год", "Опыт 2 года", "Опыт 3 года", "Опыт 5 лет"].map(e => ({ value: e, label: e }))} />
+            options={["Менее 1 года", "1-3 года", "3-6 лет", "6+ лет"].map(e => ({ value: e, label: e }))} />
           <Select label="Разряд (0 — не требуется)" value={grade} onChange={setGrade}
             options={["0", "2", "3", "4", "5", "6"].map(g => ({ value: g, label: g === "0" ? "Не требуется" : `${g} разряд` }))} />
           <Select label="Сменность" value={shift} onChange={setShift}
             options={SHIFTS.map(s => ({ value: s, label: s }))} />
-          <Select label="Подразделение" value={department} onChange={setDepartment}
-            options={MOCK_COMPANY.departments.map(d => ({ value: d, label: d }))} />
+          <Input label="Подразделение" value={department} onChange={setDepartment} placeholder="Введите название подразделения" />
 
           <div>
             <div style={{ fontFamily: F.semi, fontSize: 14, color: C.text, marginBottom: 10 }}>Допуски</div>
@@ -552,7 +551,7 @@ export function EmployerVacancyEditor() {
           <div>
             <div style={{ fontFamily: F.semi, fontSize: 14, color: C.text, marginBottom: 10 }}>Статус вакансии</div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {(Object.keys(VACANCY_STATUS_LABELS) as VacancyStatus[]).map(s => (
+              {(["draft", "active", "paused"] as VacancyStatus[]).map(s => (
                 <button key={s} onClick={() => setVacancyStatus(s)} style={{
                   padding: "8px 16px", borderRadius: 20, border: "none", cursor: "pointer",
                   background: vacancyStatus === s ? VACANCY_STATUS_COLORS[s] : C.bg,
@@ -563,31 +562,6 @@ export function EmployerVacancyEditor() {
             </div>
           </div>
 
-          {/* Каналы публикации */}
-          <div>
-            <div style={{ fontFamily: F.semi, fontSize: 14, color: C.text, marginBottom: 10 }}>Каналы публикации</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {channels.map(ch => (
-                <div key={ch.id} style={{
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                  padding: "10px 14px", background: C.bg, borderRadius: 12,
-                }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <Toggle
-                      checked={ch.enabled}
-                      onChange={() => setChannels(prev => prev.map(c =>
-                        c.id === ch.id ? { ...c, enabled: !c.enabled, publishedAt: !c.enabled ? new Date().toLocaleDateString("ru-RU") : undefined } : c
-                      ))}
-                    />
-                    <span style={{ fontFamily: F.regular, fontSize: 14, color: C.text }}>{ch.name}</span>
-                  </div>
-                  {ch.enabled && ch.publishedAt && (
-                    <span style={{ fontFamily: F.regular, fontSize: 12, color: C.sub }}>{ch.publishedAt}</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </Card>
 

@@ -988,7 +988,7 @@ function Frame91() {
       <Frame81 />
       <div className="[word-break:break-word] flex flex-col font-['Mont:Regular',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#818c99] text-[14px] tracking-[-0.4px] w-full">
         <p className="leading-[22px] mb-0">Первое приложение для поиска работы</p>
-        <p className="leading-[22px]">{`в Telegram! `}</p>
+        <p className="leading-[22px]">для рабочих и инженерных кадров</p>
       </div>
     </div>
   );
@@ -1170,7 +1170,7 @@ function Frame87() {
       <Frame88 />
       <Frame89 />
       <div className="[word-break:break-word] flex flex-col font-['Mont:Regular',sans-serif] justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#6e6e6e] text-[12px] tracking-[-0.4px] w-[min-content]">
-        <p className="leading-[18px]">Первое приложение по поиску работы в Telegram! Разработанное на базе TelegramMiniApps</p>
+        <p className="leading-[18px]">Первое приложение по поиску работы для рабочих и инженерных кадров. Подбор, оценка и развитие в едином контуре.</p>
       </div>
       <Frame26 />
     </div>

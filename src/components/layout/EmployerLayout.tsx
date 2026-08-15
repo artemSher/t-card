@@ -201,7 +201,7 @@ export function EmployerLayout({ children }: { children: React.ReactNode }) {
         <EmployerSidebar />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
           <EmployerTopBar />
-          <main style={{ flex: 1, padding: "28px 32px", maxWidth: 960, width: "100%" }}>
+          <main style={{ flex: 1, padding: "28px 32px", maxWidth: 1200, width: "100%", margin: "0 auto" }}>
             {children}
           </main>
         </div>

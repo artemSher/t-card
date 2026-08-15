@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { C, F, MOCK_VACANCIES, POPULAR_SPECIALTIES, MOCK_SEARCH_HISTORY, ADMISSIONS, SHIFTS, GRADES, SPECIALTIES } from "@/data/mockData";
+import { C, F, MOCK_VACANCIES, POPULAR_SPECIALTIES, MOCK_SEARCH_HISTORY, ADMISSIONS, SHIFTS, GRADES, SPECIALTIES, ITR_SPECIALTIES, DIRECTIONS } from "@/data/mockData";
 import { Icon } from "@/components/icons/Icons";
 import { Card, GreenBtn, OutlineBtn, Chip, EmptyState, SuccessScreen, SectionHeader } from "@/components/ui";
 import { useApp } from "@/context/AppContext";
@@ -22,6 +22,8 @@ export function SearchPage() {
   const [filterShift, setFilterShift] = useState<string | null>(null);
   const [filterAdmission, setFilterAdmission] = useState<string | null>(null);
   const [filterSpecialty, setFilterSpecialty] = useState<string | null>(null);
+  const [filterDirection, setFilterDirection] = useState<string | null>(null);
+  const [filterItr, setFilterItr] = useState<string | null>(null);
 
   function doSearch(q: string) {
     setQuery(q);
@@ -56,10 +58,12 @@ export function SearchPage() {
     if (query && !v.title.toLowerCase().includes(query.toLowerCase()) &&
         !v.company.toLowerCase().includes(query.toLowerCase()) &&
         !v.category.toLowerCase().includes(query.toLowerCase())) return false;
-    if (filterGrade && v.grade < filterGrade) return false;
+    if (filterGrade && !v.isITR && v.grade < filterGrade) return false;
     if (filterShift && v.shift !== filterShift) return false;
     if (filterAdmission && !v.admissions.includes(filterAdmission)) return false;
     if (filterSpecialty && !v.title.includes(filterSpecialty)) return false;
+    if (filterDirection && !v.category.includes(filterDirection)) return false;
+    if (filterItr && v.isITR && !v.title.includes(filterItr)) return false;
     return true;
   });
 
@@ -108,10 +112,28 @@ export function SearchPage() {
           <div style={{ fontFamily: F.semi, fontSize: 16, color: C.text, marginBottom: 14 }}>Фильтры</div>
 
           <div style={{ marginBottom: 14 }}>
-            <div style={{ fontFamily: F.regular, fontSize: 13, color: C.sub, marginBottom: 8 }}>Специальность</div>
+            <div style={{ fontFamily: F.regular, fontSize: 13, color: C.sub, marginBottom: 8 }}>Направление</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {DIRECTIONS.map(d => (
+                <Chip key={d} label={d} active={filterDirection === d} onClick={() => setFilterDirection(filterDirection === d ? null : d)} />
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ fontFamily: F.regular, fontSize: 13, color: C.sub, marginBottom: 8 }}>Профессия</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
               {SPECIALTIES.map(s => (
                 <Chip key={s} label={s} active={filterSpecialty === s} onClick={() => setFilterSpecialty(filterSpecialty === s ? null : s)} />
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ fontFamily: F.regular, fontSize: 13, color: C.sub, marginBottom: 8 }}>ИТР</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {ITR_SPECIALTIES.map(s => (
+                <Chip key={s} label={s} active={filterItr === s} onClick={() => setFilterItr(filterItr === s ? null : s)} />
               ))}
             </div>
           </div>
@@ -144,7 +166,7 @@ export function SearchPage() {
           </div>
 
           <div style={{ display: "flex", gap: 8 }}>
-            <OutlineBtn label="Сбросить" onClick={() => { setFilterGrade(null); setFilterShift(null); setFilterAdmission(null); setFilterSpecialty(null); }} />
+            <OutlineBtn label="Сбросить" onClick={() => { setFilterGrade(null); setFilterShift(null); setFilterAdmission(null); setFilterSpecialty(null); setFilterDirection(null); setFilterItr(null); }} />
             <GreenBtn label="Применить" onClick={() => doSearch(query)} />
           </div>
         </Card>
@@ -221,7 +243,7 @@ export function SearchPage() {
               icon="🔍"
               title="Ничего не найдено"
               subtitle="Попробуйте снизить требования к разряду или расширить географию"
-              action={<GreenBtn label="Сбросить фильтры" onClick={() => { setFilterGrade(null); setFilterShift(null); setFilterAdmission(null); setFilterSpecialty(null); doSearch(""); }} />}
+              action={<GreenBtn label="Сбросить фильтры" onClick={() => { setFilterGrade(null); setFilterShift(null); setFilterAdmission(null); setFilterSpecialty(null); setFilterDirection(null); setFilterItr(null); doSearch(""); }} />}
             />
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -247,7 +269,8 @@ export function SearchPage() {
                     <span style={{ color: C.green }}>/месяц</span>
                   </div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                    <Chip label={`${job.grade} разряд`} color={C.green} />
+                    {!job.isITR && <Chip label={`${job.grade} разряд`} color={C.green} />}
+                    {job.isITR && <Chip label="ИТР" color={C.blue} />}
                     <Chip label={job.shift} />
                     {job.admissions.slice(0, 2).map(a => <Chip key={a} label={a} />)}
                   </div>

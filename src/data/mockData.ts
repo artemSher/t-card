@@ -17,8 +17,6 @@ import type {
   InterviewFormat,
   TimelineEvent,
   PublicationChannel,
-  Offer,
-  OfferStatus,
   VacancyTemplate,
 } from "@/types";
 
@@ -52,10 +50,31 @@ export const SPECIALTIES = [
   "Сварщик",
   "Наладчик оборудования",
   "Слесарь-монтажник",
+  "Слесарь-ремонтник",
   "Мастер участка",
-  "Инженер-конструктор",
   "Электромонтёр",
   "Токарь",
+  "Фрезеровщик",
+  "Стропальщик",
+  "Крановщик",
+  "Шлифовщик",
+  "Слесарь-инструментальщик",
+  "Контролёр ОТК",
+  "Монтажник",
+  "Газорезчик",
+];
+
+export const ITR_SPECIALTIES = [
+  "Инженер-конструктор",
+  "Инженер-технолог",
+  "Инженер-проектировщик",
+  "Начальник цеха",
+  "Начальник участка",
+  "Инженер по охране труда",
+  "Инженер-электрик",
+  "Инженер-механик",
+  "Руководитель проекта",
+  "Технолог",
 ];
 
 export const POPULAR_SPECIALTIES = [
@@ -69,7 +88,66 @@ export const POPULAR_SPECIALTIES = [
   "Токарь",
 ];
 
-export const CATEGORIES = ["Промышленность", "Демонтаж", "Стройка", "Сфера"];
+export const EXPERIENCE_OPTIONS = [
+  "Менее 1 года",
+  "1–3 года",
+  "3–6 лет",
+  "6+ лет",
+];
+
+export const EDUCATION_OPTIONS = [
+  "Среднее общее",
+  "Среднее профессиональное",
+  "Высшее (бакалавриат)",
+  "Высшее (магистратура)",
+];
+
+export const CONSTRUCTOR_DEPARTMENTS = [
+  "Цех №1 — механический",
+  "Цех №2 — сварочный",
+  "Цех №3 — участок наладки",
+  "Отдел расчётов",
+  "Отдел проектирования",
+  "Конструкторское бюро",
+  "Отдел технологии",
+  "Электрослужба",
+  "Ремонтный участок",
+  "Монтажный участок",
+  "Производственный участок",
+  "Отдел контроля качества",
+];
+
+export const ITR_REQUIREMENTS = [
+  "ЕСКД",
+  "ЕСТД",
+  "ГОСТ",
+  "Сапр",
+  "Грейд 5",
+  "Грейд 6",
+  "Грейд 7",
+  "Грейд 8",
+];
+
+export const CATEGORIES = [
+  "Машиностроение",
+  "Металлообработка",
+  "Нефтегазовая и добывающая промышленность",
+  "Пищевое производство",
+  "Строительство",
+  "Ремонт и обслуживание оборудования",
+  "Энергетика и электротехника",
+  "Логистика и складское хозяйство",
+];
+
+export const DIRECTIONS = [
+  "Машиностроение",
+  "Металлообработка",
+  "Энергетика",
+  "Строительство",
+  "Нефтегазовая промышленность",
+  "Пищевое производство",
+  "Логистика",
+];
 
 export const ADMISSIONS = [
   "Электробезопасность II",
@@ -82,7 +160,7 @@ export const ADMISSIONS = [
 
 export const SHIFTS = ["2/2", "5/2", "Вахта"];
 
-export const GRADES = [2, 3, 4, 5, 6];
+export const GRADES = [1, 2, 3, 4, 5, 6];
 
 // ─── Вакансии ────────────────────────────────────────────────────────────────
 export const MOCK_VACANCIES: Vacancy[] = [
@@ -253,6 +331,8 @@ export const MOCK_VACANCIES: Vacancy[] = [
     category: "Промышленность",
     rating: 4.8,
     reviewsCount: 48,
+    isITR: true,
+    itrRequirements: ["ЕСКД", "ГОСТ", "Сапр", "Грейд 6"],
   },
 ];
 
@@ -363,7 +443,6 @@ export const MOCK_APPLICATIONS: Application[] = [
       { name: "Отклик отправлен", date: "17 января 2025", done: true },
       { name: "Скрининг", date: "18 января 2025", done: true },
       { name: "Собеседование", date: "22 января 2025", done: false },
-      { name: "Оффер", date: "", done: false },
     ],
   },
   {
@@ -546,23 +625,31 @@ export const MOCK_RESUMES: Resume[] = [
   {
     id: 1,
     specialty: "Оператор ЧПУ",
-    experience: "Опыт 6 лет",
+    experience: "6+ лет",
     salaryFrom: 90000,
     salaryTo: 130000,
     city: "Екатеринбург",
     active: true,
     updatedAt: "27 января 2025, 18:46",
+    about: "Опыт работы на станках с ЧПУ более 6 лет. Специализируюсь на обработке алюминия и стали.",
+    admissions: ["Электробезопасность II", "Работы на высоте"],
+    grade: 4,
+    education: "Среднее профессиональное",
     stats: { favorites: 60, responses: 50, views: 100 },
   },
   {
     id: 2,
     specialty: "Наладчик оборудования",
-    experience: "Опыт 4 года",
+    experience: "3–6 лет",
     salaryFrom: 80000,
     salaryTo: 120000,
     city: "Екатеринбург",
     active: false,
     updatedAt: "15 января 2025, 12:30",
+    about: "Наладка и ремонт промышленного оборудования. Чтение кинематических и гидравлических схем.",
+    admissions: ["Электробезопасность III", "Промышленная безопасность"],
+    grade: 5,
+    education: "Среднее профессиональное",
     stats: { favorites: 6, responses: 3, views: 6 },
   },
 ];
@@ -601,7 +688,78 @@ export const DEFAULT_USER: User = {
   specialty: "Оператор ЧПУ",
   grade: 4,
   city: "Екатеринбург",
+  about: "Опыт работы на станках с ЧПУ более 6 лет. Специализируюсь на обработке алюминия и стали. Имею 4 разряд, удостоверения по электробезопасности и работам на высоте.",
 };
+
+// ─── Тестовые аккаунты ───────────────────────────────────────────────────────
+export const TEST_ACCOUNTS = [
+  {
+    id: "emp-1",
+    role: "employee" as const,
+    name: "Иван Петров",
+    phone: "+7 999 123-45-67",
+    specialty: "Оператор ЧПУ",
+    grade: 4,
+    city: "Екатеринбург",
+    about: "Опыт работы на станках с ЧПУ более 6 лет. Специализируюсь на обработке алюминия и стали. Имею 4 разряд, удостоверения по электробезопасности и работам на высоте.",
+    label: "Оператор ЧПУ, 4 разряд",
+  },
+  {
+    id: "emp-2",
+    role: "employee" as const,
+    name: "Дмитрий Соколов",
+    phone: "+7 999 222-33-44",
+    specialty: "Сварщик",
+    grade: 5,
+    city: "Челябинск",
+    about: "Сварщик 5 разряда. Опыт работы 8 лет на различных видах сварки: ручная дуговая, полуавтоматическая, аргонодуговая.",
+    label: "Сварщик, 5 разряд",
+  },
+  {
+    id: "emp-3",
+    role: "employee" as const,
+    name: "Алексей Морозов",
+    phone: "+7 999 555-66-77",
+    specialty: "Наладчик оборудования",
+    grade: 6,
+    city: "Екатеринбург",
+    about: "Наладчик КИПиА, 6 разряд. Опыт работы 12 лет. Обслуживание и ремонт промышленного оборудования.",
+    label: "Наладчик, 6 разряд",
+  },
+  {
+    id: "emp-4",
+    role: "employee" as const,
+    name: "Сергей Волков",
+    phone: "+7 999 888-99-00",
+    specialty: "Инженер-конструктор",
+    grade: undefined,
+    city: "Екатеринбург",
+    about: "Инженер-конструктор машиностроительного профиля. Опыт работы с САПР: Компас-3D, AutoCAD, SolidWorks.",
+    label: "Инженер-конструктор (ИТР)",
+  },
+  {
+    id: "emp-5",
+    role: "employee" as const,
+    name: "Анна Кузнецова",
+    phone: "+7 999 444-55-66",
+    specialty: "Электромонтёр",
+    grade: 3,
+    city: "Пермь",
+    about: "Электромонтёр 3 разряда. Допуск по электробезопасности III группы. Опыт работы 2 года.",
+    label: "Электромонтёр, 3 разряд",
+  },
+  {
+    id: "emp-6",
+    role: "employee" as const,
+    name: "Максим Новиков",
+    phone: "+7 999 777-88-99",
+    specialty: "Токарь",
+    grade: 2,
+    city: "Екатеринбург",
+    about: "Токарь 2 разряда. Начинающий специалист, окончил колледж. Работаю на токарно-винторезном станке.",
+    label: "Токарь, 2 разряд",
+  },
+];
 
 // ─── История поиска ──────────────────────────────────────────────────────────
 export const MOCK_SEARCH_HISTORY = [
@@ -639,7 +797,6 @@ export const APPLICATION_STATUS_LABELS: Record<string, string> = {
   invitation: "Приглашение",
   interview: "Собеседование",
   rejected: "Отклонено",
-  offer: "Оффер",
   hired: "Нанят",
 };
 
@@ -648,7 +805,6 @@ export const APPLICATION_STATUS_COLORS: Record<string, string> = {
   invitation: C.green,
   interview: C.blue,
   rejected: C.red,
-  offer: C.green,
   hired: C.green,
 };
 
@@ -671,7 +827,6 @@ export const VACANCY_STATUS_COLORS: Record<VacancyStatus, string> = {
 export const PUBLICATION_CHANNELS: { id: string; name: string }[] = [
   { id: "platform", name: "Платформа Т-Card" },
   { id: "hh", name: "hh.ru" },
-  { id: "telegram", name: "Telegram-канал" },
   { id: "vk", name: "ВКонтакте" },
   { id: "avito", name: "Авито Работа" },
   { id: "referral", name: "Рекомендации сотрудников" },
@@ -713,28 +868,9 @@ export const TIMELINE_EVENT_LABELS: Record<string, string> = {
   interview_no_show: "Кандидат не явился",
   interview_cancelled: "Собеседование отменено",
   interview_completed: "Собеседование завершено",
-  offer_sent: "Оффер отправлен",
-  offer_accepted: "Оффер принят",
-  offer_declined: "Оффер отклонён",
-  offer_expired: "Оффер истёк",
   hired: "Кандидат нанят",
   rejected: "Отклонено",
   comment: "Комментарий",
-};
-
-// ─── Статусы оффера ───────────────────────────────────────────────────────────
-export const OFFER_STATUS_LABELS: Record<OfferStatus, string> = {
-  sent: "Отправлен",
-  accepted: "Принят",
-  declined: "Отклонён",
-  expired: "Истёк",
-};
-
-export const OFFER_STATUS_COLORS: Record<OfferStatus, string> = {
-  sent: C.blue,
-  accepted: C.green,
-  declined: C.red,
-  expired: C.gray,
 };
 
 // ─── Данные работодателя ─────────────────────────────────────────────────────
@@ -765,7 +901,6 @@ export const MOCK_EMPLOYER_VACANCIES: Vacancy[] = [
     channels: [
       { id: "platform", name: "Платформа Т-Card", enabled: true, publishedAt: "17 января 2025" },
       { id: "hh", name: "hh.ru", enabled: true, publishedAt: "17 января 2025" },
-      { id: "telegram", name: "Telegram-канал", enabled: false },
       { id: "vk", name: "ВКонтакте", enabled: false },
       { id: "avito", name: "Авито Работа", enabled: false },
       { id: "referral", name: "Рекомендации сотрудников", enabled: false },
@@ -788,14 +923,13 @@ export const MOCK_EMPLOYER_VACANCIES: Vacancy[] = [
     views: 156,
     responses: 8,
     active: true,
-    category: "Промышленность",
+    category: "electrical-engineering",
     rating: 4.8,
     reviewsCount: 48,
     vacancyStatus: "active",
     channels: [
       { id: "platform", name: "Платформа Т-Card", enabled: true, publishedAt: "15 января 2025" },
       { id: "hh", name: "hh.ru", enabled: false },
-      { id: "telegram", name: "Telegram-канал", enabled: true, publishedAt: "15 января 2025" },
       { id: "vk", name: "ВКонтакте", enabled: false },
       { id: "avito", name: "Авито Работа", enabled: false },
       { id: "referral", name: "Рекомендации сотрудников", enabled: false },
@@ -825,7 +959,6 @@ export const MOCK_EMPLOYER_VACANCIES: Vacancy[] = [
     channels: [
       { id: "platform", name: "Платформа Т-Card", enabled: true, publishedAt: "10 января 2025" },
       { id: "hh", name: "hh.ru", enabled: false },
-      { id: "telegram", name: "Telegram-канал", enabled: false },
       { id: "vk", name: "ВКонтакте", enabled: false },
       { id: "avito", name: "Авито Работа", enabled: false },
       { id: "referral", name: "Рекомендации сотрудников", enabled: false },
@@ -850,7 +983,6 @@ export interface EmployerApplication {
   admissions: string[];
   shift: string;
   interview?: Interview;
-  offer?: Offer;
   timeline: TimelineEvent[];
 }
 
@@ -989,7 +1121,6 @@ export const MOCK_COMPANY = {
   name: "ПромТех Решения",
   inn: "6678001234",
   industry: "Машиностроение",
-  size: "50–200 человек",
   address: "Екатеринбург, ул. Промышленная, 15",
   departments: ["Цех №1 — ремонтный участок", "Цех №3 — участок наладки", "Конструкторское бюро", "Электрослужба"],
   verified: true,
@@ -1021,7 +1152,8 @@ export const MOCK_ANALYTICS = {
     { stage: "Отклики", count: 31 },
     { stage: "Скрининг пройден", count: 18 },
     { stage: "Собеседование", count: 7 },
-    { stage: "Оффер", count: 3 },
+    { stage: "Собеседование пройдено", count: 5 },
+    { stage: "Найм", count: 3 },
   ],
   // Источники
   sources: [

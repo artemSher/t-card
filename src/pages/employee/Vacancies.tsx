@@ -89,9 +89,18 @@ export function VacancyList() {
                   <span style={{ color: C.green }}>/месяц</span>
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                  <Chip label={`${job.grade} разряд`} color={C.green} />
-                  <Chip label={job.shift} />
-                  {job.admissions.slice(0, 2).map(a => <Chip key={a} label={a} />)}
+                  {job.isITR ? (
+                    <>
+                      {job.itrRequirements?.map(req => <Chip key={req} label={req} color={C.green} />)}
+                      <Chip label={job.shift} />
+                    </>
+                  ) : (
+                    <>
+                      <Chip label={`${job.grade} разряд`} color={C.green} />
+                      <Chip label={job.shift} />
+                      {job.admissions.slice(0, 2).map(a => <Chip key={a} label={a} />)}
+                    </>
+                  )}
                 </div>
               </Card>
             ))}
@@ -207,7 +216,7 @@ export function VacancyDetail() {
               </span>
             </div>
           </div>
-          <button onClick={() => navigate("/employee/search")} style={{
+          <button onClick={() => navigate(`/employee/vacancies?company=${encodeURIComponent(job.company)}`)} style={{
             background: C.bg, border: `1px solid ${C.border}`, borderRadius: 16,
             padding: "8px 16px", cursor: "pointer", fontFamily: F.regular, fontSize: 13, color: C.muted,
           }}>Отзывы</button>
@@ -218,10 +227,20 @@ export function VacancyDetail() {
       <Card>
         <div style={{ fontFamily: F.semi, fontSize: 16, color: C.text, marginBottom: 14 }}>Требования</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          <Chip label={`${job.grade} разряд`} color={C.green} />
-          <Chip label={job.shift} color={C.blue} />
-          {job.admissions.map(a => <Chip key={a} label={a} />)}
-          <Chip label={job.department} />
+          {job.isITR ? (
+            <>
+              {job.itrRequirements?.map((req: string) => <Chip key={req} label={req} color={C.green} />)}
+              <Chip label={job.shift} color={C.blue} />
+              <Chip label={job.department} />
+            </>
+          ) : (
+            <>
+              <Chip label={`${job.grade} разряд`} color={C.green} />
+              <Chip label={job.shift} color={C.blue} />
+              {job.admissions.map(a => <Chip key={a} label={a} />)}
+              <Chip label={job.department} />
+            </>
+          )}
         </div>
       </Card>
 

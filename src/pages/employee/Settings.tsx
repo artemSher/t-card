@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { C, F, MOCK_NOTIFICATIONS, MOCK_SECURITY_LOG, MOCK_INTEGRATIONS, MOCK_SAVED_SEARCHES } from "@/data/mockData";
+import { C, F, MOCK_NOTIFICATIONS, MOCK_SECURITY_LOG, MOCK_SAVED_SEARCHES } from "@/data/mockData";
 import { Icon } from "@/components/icons/Icons";
 import { Card, GreenBtn, OutlineBtn, Chip, Input, Toggle, SectionHeader, StatusBadge, EmptyState } from "@/components/ui";
 import { useApp } from "@/context/AppContext";
@@ -181,25 +181,6 @@ export function SettingsPage() {
         </div>
       </Card>
 
-      {/* Интеграции */}
-      <Card>
-        <SectionHeader title="Интеграции" />
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {MOCK_INTEGRATIONS.map(int => (
-            <div key={int.id} style={{
-              display: "flex", justifyContent: "space-between", alignItems: "center",
-              padding: "12px 0", borderBottom: `1px solid ${C.border}`,
-            }}>
-              <div>
-                <div style={{ fontFamily: F.semi, fontSize: 14, color: C.text }}>{int.name}</div>
-                <div style={{ fontFamily: F.regular, fontSize: 12, color: C.sub }}>{int.description}</div>
-              </div>
-              <Toggle checked={int.enabled} onChange={() => {}} />
-            </div>
-          ))}
-        </div>
-      </Card>
-
       {/* Выход */}
       <button onClick={logout} style={{
         background: "white", border: `1px solid ${C.border}`, borderRadius: 20,
@@ -210,6 +191,9 @@ export function SettingsPage() {
         <Icon.Logout size={18} color={C.red} />
         Выйти из аккаунта
       </button>
+
+      {/* Сохранить изменения */}
+      <GreenBtn label="Сохранить изменения" full onClick={() => navigate("/employee/settings")} />
     </div>
   );
 }

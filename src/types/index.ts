@@ -14,16 +14,6 @@ export interface PublicationChannel {
 // ─── Interview ───────────────────────────────────────────────────────────────
 export type InterviewFormat = "offline" | "online" | "phone";
 
-// ─── Offer ───────────────────────────────────────────────────────────────────
-export type OfferStatus = "sent" | "accepted" | "declined" | "expired";
-
-export interface Offer {
-  salary: number;
-  startDate: string;
-  conditions: string;
-  status: OfferStatus;
-  sentAt: string;
-}
 export type InterviewStatus =
   | "scheduled"
   | "confirmed"
@@ -53,10 +43,6 @@ export interface TimelineEvent {
     | "interview_no_show"
     | "interview_cancelled"
     | "interview_completed"
-    | "offer_sent"
-    | "offer_accepted"
-    | "offer_declined"
-    | "offer_expired"
     | "hired"
     | "rejected"
     | "comment";
@@ -106,6 +92,8 @@ export interface Vacancy {
   vacancyStatus?: VacancyStatus;
   channels?: PublicationChannel[];
   templateId?: number;
+  isITR?: boolean;
+  itrRequirements?: string[];
 }
 
 // ─── Vacancy template ─────────────────────────────────────────────────────────
@@ -138,6 +126,7 @@ export interface Candidate {
   admissions: string[];
   shift: string;
   assessments: AssessmentTopic[];
+  description?: string;
 }
 
 export interface AssessmentTopic {
@@ -151,7 +140,6 @@ export type ApplicationStatus =
   | "invitation"
   | "interview"
   | "rejected"
-  | "offer"
   | "hired";
 
 export interface Application {
@@ -232,6 +220,11 @@ export interface Resume {
   city: string;
   active: boolean;
   updatedAt: string;
+  about?: string;
+  admissions?: string[];
+  grade?: number;
+  education?: string;
+  shift?: string;
   stats: {
     favorites: number;
     responses: number;
@@ -288,7 +281,6 @@ export interface Company {
   name: string;
   inn: string;
   industry: string;
-  size: string;
   address: string;
   departments: string[];
   verified: boolean;
@@ -305,4 +297,5 @@ export interface User {
   grade?: number;
   city?: string;
   photo?: string;
+  about?: string;
 }

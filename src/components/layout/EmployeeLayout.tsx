@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { path: "/employee", label: "Главная", Icon: Icon.Home },
   { path: "/employee/vacancies", label: "Вакансии", Icon: Icon.Search },
   { path: "/employee/applications", label: "Отклики", Icon: Icon.Briefcase },
+  { path: "/employee/development", label: "Развитие", Icon: Icon.Award },
   { path: "/employee/profile", label: "Профиль", Icon: Icon.User },
   { path: "/employee/settings", label: "Настройки", Icon: Icon.Settings },
 ];
@@ -234,7 +235,7 @@ export function EmployeeLayout({ children }: { children: React.ReactNode }) {
         <EmployeeSidebar />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
           <EmployeeTopBar />
-          <main style={{ flex: 1, padding: "28px 32px", maxWidth: 960, width: "100%" }}>
+          <main style={{ flex: 1, padding: "28px 32px", maxWidth: 1200, width: "100%", margin: "0 auto" }}>
             {children}
           </main>
         </div>

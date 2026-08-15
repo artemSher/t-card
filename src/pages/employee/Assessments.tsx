@@ -176,8 +176,14 @@ export function AssessmentDetail() {
         )}
 
         <div style={{ display: "flex", gap: 8 }}>
-          <OutlineBtn label="Скачать сертификат" full icon={<Icon.Download size={16} />} />
-          <OutlineBtn label="Поделиться" icon={<Icon.Link size={16} />} />
+          <OutlineBtn label="Скачать PDF" full icon={<Icon.Download size={16} />} onClick={() => window.print()} />
+          <OutlineBtn label="Поделиться" icon={<Icon.Link size={16} />} onClick={() => {
+            if (navigator.share) {
+              navigator.share({ title: assessment.title, text: `Мой результат: ${score} баллов` });
+            } else {
+              navigator.clipboard?.writeText(`Мой результат по оценке «${assessment.title}»: ${score} баллов`);
+            }
+          }} />
         </div>
       </div>
     );
@@ -230,6 +236,36 @@ export function AssessmentDetail() {
 
   // ─── Test ──────────────────────────────────────────────────────────────────
   const questions = assessment.questions ?? [];
+
+  // Guard: case-type assessment with no questions
+  if (questions.length === 0) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <button onClick={() => navigate("/employee/assessments")} style={{
+          background: "none", border: "none", cursor: "pointer",
+          display: "flex", alignItems: "center", gap: 6, color: C.sub, alignSelf: "flex-start",
+        }}>
+          <Icon.ChevronLeft size={18} />
+          <span style={{ fontFamily: F.regular, fontSize: 14 }}>К оценкам</span>
+        </button>
+
+        <Card>
+          <div style={{ fontFamily: F.semi, fontSize: 20, color: C.text, marginBottom: 12 }}>{assessment.title}</div>
+          <div style={{
+            background: `${C.blue}10`, borderRadius: 14, padding: "16px 18px",
+            marginBottom: 20, display: "flex", alignItems: "flex-start", gap: 10,
+          }}>
+            <Icon.AlertTriangle size={18} color={C.blue} />
+            <span style={{ fontFamily: F.regular, fontSize: 14, color: C.muted, lineHeight: "22px" }}>
+              Это производственный кейс. Описание задания и материалы будут предоставлены работодателем. Свяжитесь с HR-специалистом для получения подробной информации.
+            </span>
+          </div>
+          <GreenBtn label="К оценкам" full onClick={() => navigate("/employee/assessments")} />
+        </Card>
+      </div>
+    );
+  }
+
   const q = questions[currentQ];
 
   function nextQuestion() {

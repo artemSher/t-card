@@ -19,7 +19,7 @@ export function AnalyticsPage() {
         <KPITile value={String(totalViews)} label="Просмотры за неделю" color={C.blue} />
         <KPITile value={String(totalResponses)} label="Отклики за неделю" color={C.green} />
         <KPITile value={`${conversion}%`} label="Конверсия" color={C.amber} />
-        <KPITile value="3" label="Оффера" />
+        <KPITile value="3" label="Наймы" color={C.green} />
       </div>
 
       {/* График просмотров и откликов */}

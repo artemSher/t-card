@@ -5,8 +5,8 @@ import { EmployeeLayout } from "@/components/layout/EmployeeLayout";
 import { EmployerLayout } from "@/components/layout/EmployerLayout";
 
 // Auth
-import { RoleSelection, EmployeeLogin, PhoneInputPage, CodeVerificationPage } from "@/pages/employee/Auth";
-import { EmployerLogin, EmployerPhoneInput, EmployerCodeVerification } from "@/pages/employer/Auth";
+import { RoleSelection, EmployeeLogin, PhoneInputPage, CodeVerificationPage, EmployeeRegister, EmployeeRegisterCode, EmployeeRegisterProfile } from "@/pages/employee/Auth";
+import { EmployerLogin, EmployerPhoneInput, EmployerCodeVerification, EmployerRegister, EmployerRegisterCode, EmployerVerificationPending, EmployerVerificationSuccess } from "@/pages/employer/Auth";
 
 // Employee pages
 import { EmployeeHome } from "@/pages/employee/Home";
@@ -27,6 +27,7 @@ import { CandidateList, CandidateDetail } from "@/pages/employer/Candidates";
 import { EmployerApplicationList, EmployerApplicationDetail } from "@/pages/employer/Applications";
 import { AnalyticsPage } from "@/pages/employer/Analytics";
 import { CompanyProfile } from "@/pages/employer/Company";
+import { CompanyEdit } from "@/pages/employer/CompanyEdit";
 import { EmployerNotificationsPage, EmployerSettingsPage } from "@/pages/employer/Settings";
 
 // ─── Guard: redirect to login if not authenticated ───────────────────────────
@@ -98,6 +99,9 @@ function AppInner() {
       <Route path="/employee/login" element={<RedirectIfAuth><EmployeeLogin /></RedirectIfAuth>} />
       <Route path="/employee/phone" element={<RedirectIfAuth><PhoneInputPage /></RedirectIfAuth>} />
       <Route path="/employee/code" element={<RedirectIfAuth><CodeVerificationPage /></RedirectIfAuth>} />
+      <Route path="/employee/register" element={<RedirectIfAuth><EmployeeRegister /></RedirectIfAuth>} />
+      <Route path="/employee/register/code" element={<RedirectIfAuth><EmployeeRegisterCode /></RedirectIfAuth>} />
+      <Route path="/employee/register/profile" element={<RedirectIfAuth><EmployeeRegisterProfile /></RedirectIfAuth>} />
 
       {/* Employee app */}
       <Route path="/employee/*" element={<EmployeeRoutes />} />
@@ -106,6 +110,10 @@ function AppInner() {
       <Route path="/employer/login" element={<RedirectIfEmployerAuth><EmployerLogin /></RedirectIfEmployerAuth>} />
       <Route path="/employer/phone" element={<RedirectIfEmployerAuth><EmployerPhoneInput /></RedirectIfEmployerAuth>} />
       <Route path="/employer/code" element={<RedirectIfEmployerAuth><EmployerCodeVerification /></RedirectIfEmployerAuth>} />
+      <Route path="/employer/register" element={<RedirectIfEmployerAuth><EmployerRegister /></RedirectIfEmployerAuth>} />
+      <Route path="/employer/register/code" element={<RedirectIfEmployerAuth><EmployerRegisterCode /></RedirectIfEmployerAuth>} />
+      <Route path="/employer/verification/pending" element={<RequireEmployerAuth><EmployerVerificationPending /></RequireEmployerAuth>} />
+      <Route path="/employer/verification/success" element={<RequireEmployerAuth><EmployerVerificationSuccess /></RequireEmployerAuth>} />
 
       {/* Employer app */}
       <Route path="/employer/*" element={
@@ -123,6 +131,7 @@ function AppInner() {
               <Route path="applications/:id" element={<EmployerApplicationDetail />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="company" element={<CompanyProfile />} />
+              <Route path="company/edit" element={<CompanyEdit />} />
               <Route path="notifications" element={<EmployerNotificationsPage />} />
               <Route path="settings" element={<EmployerSettingsPage />} />
             </Routes>

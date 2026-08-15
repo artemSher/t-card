@@ -31,6 +31,16 @@ export function EmployeeProfile() {
         </div>
       </Card>
 
+      {/* О себе */}
+      {user.about && (
+        <Card>
+          <SectionHeader title="О себе" />
+          <div style={{ fontFamily: F.regular, fontSize: 14, color: C.muted, lineHeight: "22px" }}>
+            {user.about}
+          </div>
+        </Card>
+      )}
+
       {/* Быстрые действия */}
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
         <GreenBtn label="Обновить резюме" onClick={() => navigate(resumes.length ? `/employee/resumes/${resumes[0].id}` : "/employee/resumes/new")} />

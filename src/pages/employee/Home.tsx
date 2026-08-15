@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { C, F, MOCK_VACANCIES, MOCK_ASSESSMENTS } from "@/data/mockData";
 import { Icon } from "@/components/icons/Icons";
-import { Card, GreenBtn, OutlineBtn, Chip, SectionHeader } from "@/components/ui";
+import { Card, GreenBtn, OutlineBtn, Chip, SectionHeader, Input } from "@/components/ui";
 import { useApp } from "@/context/AppContext";
 
 export function EmployeeHome() {
@@ -10,6 +10,14 @@ export function EmployeeHome() {
   const { user, bookmarks, toggleBookmark } = useApp();
   const assignedAssessments = MOCK_ASSESSMENTS.filter(a => a.status === "assigned");
   const recommendedJobs = MOCK_VACANCIES.slice(0, 4);
+  const [showReschedule, setShowReschedule] = useState(false);
+  const [rescheduleDate, setRescheduleDate] = useState("");
+  const [rescheduleTime, setRescheduleTime] = useState("");
+  const [showConsultation, setShowConsultation] = useState(false);
+  const [consultationName, setConsultationName] = useState(user.name);
+  const [consultationPhone, setConsultationPhone] = useState(user.phone ?? "");
+  const [consultationTopic, setConsultationTopic] = useState("");
+  const [consultationSent, setConsultationSent] = useState(false);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -66,9 +74,24 @@ export function EmployeeHome() {
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <GreenBtn label="Подготовиться" onClick={() => navigate("/employee/applications/1")} />
-          <OutlineBtn label="Перенести" />
+          <OutlineBtn label="Перенести" onClick={() => setShowReschedule(true)} />
         </div>
       </Card>
+
+      {/* Модалка переноса */}
+      {showReschedule && (
+        <Card style={{ border: `2px solid ${C.green}` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+            <div style={{ fontFamily: F.semi, fontSize: 16, color: C.text }}>Перенести собеседование</div>
+            <button onClick={() => setShowReschedule(false)} style={{ background: "none", border: "none", cursor: "pointer", color: C.sub, fontSize: 18 }}>×</button>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <Input label="Дата" value={rescheduleDate} onChange={setRescheduleDate} placeholder="ДД.ММ.ГГГГ" type="date" />
+            <Input label="Время" value={rescheduleTime} onChange={setRescheduleTime} placeholder="14:00" type="time" />
+            <GreenBtn label="Подтвердить перенос" full onClick={() => setShowReschedule(false)} disabled={!rescheduleDate || !rescheduleTime} />
+          </div>
+        </Card>
+      )}
 
       {/* Приглашение к оценке */}
       {assignedAssessments.length > 0 && (
@@ -95,7 +118,7 @@ export function EmployeeHome() {
       <section>
         <SectionHeader
           title="Подобранные вакансии"
-          subtitle="Основаны на вашем разряде и допусках"
+          subtitle="Основаны на вашем опыте и квалификации"
           action={<button onClick={() => navigate("/employee/vacancies")} style={{
             fontFamily: F.regular, fontSize: 14, color: C.green,
             background: "none", border: "none", cursor: "pointer",
@@ -147,13 +170,37 @@ export function EmployeeHome() {
           <div style={{ fontFamily: F.regular, fontSize: 14, color: "rgba(255,255,255,0.82)", marginBottom: 16 }}>
             Запишитесь на консультацию с карьерным специалистом
           </div>
-          <button style={{
+          <button onClick={() => setShowConsultation(true)} style={{
             background: "white", color: C.blue, fontFamily: F.semi, fontSize: 14,
             borderRadius: 20, padding: "10px 22px", border: "none", cursor: "pointer",
           }}>Записаться на консультацию</button>
         </div>
         <div style={{ fontSize: 48 }}>📋</div>
       </div>
+
+      {/* Форма консультации */}
+      {showConsultation && (
+        <Card style={{ border: `2px solid ${C.blue}` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+            <div style={{ fontFamily: F.semi, fontSize: 16, color: C.text }}>Запись на консультацию</div>
+            <button onClick={() => { setShowConsultation(false); setConsultationSent(false); }} style={{ background: "none", border: "none", cursor: "pointer", color: C.sub, fontSize: 18 }}>×</button>
+          </div>
+          {consultationSent ? (
+            <div style={{ textAlign: "center", padding: 20 }}>
+              <div style={{ fontSize: 40, marginBottom: 8 }}>✅</div>
+              <div style={{ fontFamily: F.semi, fontSize: 16, color: C.text, marginBottom: 6 }}>Заявка отправлена!</div>
+              <div style={{ fontFamily: F.regular, fontSize: 14, color: C.sub }}>Специалист свяжется с вами в течение рабочего дня</div>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <Input label="Имя" value={consultationName} onChange={setConsultationName} placeholder="Ваше имя" />
+              <Input label="Телефон" value={consultationPhone} onChange={setConsultationPhone} placeholder="+7 ..." type="tel" />
+              <Input label="Тема обращения" value={consultationTopic} onChange={setConsultationTopic} placeholder="Например: смена профессии, повышение разряда" />
+              <GreenBtn label="Отправить заявку" full onClick={() => setConsultationSent(true)} disabled={!consultationName || !consultationPhone} />
+            </div>
+          )}
+        </Card>
+      )}
     </div>
   );
 }

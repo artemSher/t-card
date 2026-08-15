@@ -4,23 +4,20 @@ import {
   C, F, MOCK_EMPLOYER_APPLICATIONS,
   APPLICATION_STATUS_LABELS, APPLICATION_STATUS_COLORS,
   INTERVIEW_FORMAT_LABELS, INTERVIEW_STATUS_LABELS, INTERVIEW_STATUS_COLORS,
-  OFFER_STATUS_LABELS, OFFER_STATUS_COLORS,
   TIMELINE_EVENT_LABELS,
 } from "@/data/mockData";
 import { Icon } from "@/components/icons/Icons";
 import { Card, GreenBtn, OutlineBtn, StatusBadge, EmptyState, SectionHeader, Chip, ProgressBar, Input, Select } from "@/components/ui";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import type { ApplicationStatus, InterviewFormat, InterviewStatus, OfferStatus, TimelineEvent } from "@/types";
+import type { ApplicationStatus, InterviewFormat, InterviewStatus, TimelineEvent } from "@/types";
 import type { EmployerApplication } from "@/data/mockData";
 
 const STATUS_FILTERS: { key: ApplicationStatus | "all"; label: string }[] = [
   { key: "all", label: "Все" },
-  { key: "pending", label: "Новые" },
-  { key: "invitation", label: "Приглашённые" },
+  { key: "pending", label: "Ожидание" },
   { key: "interview", label: "Собеседование" },
-  { key: "offer", label: "Оффер" },
+  { key: "rejected", label: "Отказ" },
   { key: "hired", label: "Нанятые" },
-  { key: "rejected", label: "Отклонённые" },
 ];
 
 // ─── Список откликов ─────────────────────────────────────────────────────────
@@ -116,11 +113,12 @@ export function EmployerApplicationDetail() {
   const [intAddress, setIntAddress] = useState(app?.interview?.address ?? "");
   const [intComment, setIntComment] = useState(app?.interview?.comment ?? "");
 
-  // Offer form state
-  const [showOfferForm, setShowOfferForm] = useState(false);
-  const [offerSalary, setOfferSalary] = useState("");
-  const [offerStartDate, setOfferStartDate] = useState("");
-  const [offerConditions, setOfferConditions] = useState("");
+  // Offer form state — removed
+
+  // Chat state
+  const [showChat, setShowChat] = useState(false);
+  const [chatMessages, setChatMessages] = useState<{ author: "employer" | "candidate"; text: string; time: string }[]>([]);
+  const [chatInput, setChatInput] = useState("");
 
   if (!app) {
     return <EmptyState icon="🔍" title="Отклик не найден" subtitle="Возможно, данные были удалены" />;
@@ -131,10 +129,10 @@ export function EmployerApplicationDetail() {
   }
 
   function updateStatus(status: ApplicationStatus) {
-    const eventType: TimelineEvent["type"] = status === "rejected" ? "rejected" : status === "offer" ? "offer_sent" : "status_changed";
+    const eventType: TimelineEvent["type"] = status === "rejected" ? "rejected" : status === "hired" ? "hired" : "status_changed";
     const eventComment = status === "invitation" ? "Приглашение на собеседование"
       : status === "interview" ? "Собеседование назначено"
-      : status === "offer" ? "Оффер отправлен"
+      : status === "hired" ? "Кандидат нанят"
       : status === "rejected" ? "Отклонено"
       : "Возвращён в работу";
     updateApp(a => ({
@@ -148,6 +146,10 @@ export function EmployerApplicationDetail() {
         comment: eventComment,
       }],
     }));
+    if (status === "invitation") {
+      setShowChat(true);
+      setChatMessages([{ author: "employer", text: "Здравствуйте! Приглашаем вас на собеседование.", time: new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }) }]);
+    }
   }
 
   function scheduleInterview() {
@@ -191,47 +193,11 @@ export function EmployerApplicationDetail() {
     }));
   }
 
-  function sendOffer() {
-    if (!offerSalary || !offerStartDate) return;
-    updateApp(a => ({
-      ...a,
-      status: "offer",
-      offer: {
-        salary: Number(offerSalary),
-        startDate: offerStartDate,
-        conditions: offerConditions,
-        status: "sent",
-        sentAt: new Date().toLocaleDateString("ru-RU"),
-      },
-      timeline: [...a.timeline, {
-        id: Date.now(),
-        type: "offer_sent",
-        author: "Анна Смирнова",
-        timestamp: new Date().toLocaleString("ru-RU"),
-        comment: `Оффер отправлен: з/п ${Number(offerSalary).toLocaleString()} ₽, выход ${offerStartDate}`,
-      }],
-    }));
-    setShowOfferForm(false);
-  }
-
-  function updateOfferStatus(status: OfferStatus) {
-    const eventType: TimelineEvent["type"] =
-      status === "accepted" ? "offer_accepted"
-      : status === "declined" ? "offer_declined"
-      : "offer_expired";
-    const label = OFFER_STATUS_LABELS[status];
-    updateApp(a => ({
-      ...a,
-      status: status === "accepted" ? "hired" : a.status,
-      offer: a.offer ? { ...a.offer, status } : a.offer,
-      timeline: [...a.timeline, {
-        id: Date.now(),
-        type: status === "accepted" ? "hired" : eventType,
-        author: "Анна Смирнова",
-        timestamp: new Date().toLocaleString("ru-RU"),
-        comment: status === "accepted" ? "Кандидат принял оффер — нанят" : `Оффер: ${label.toLowerCase()}`,
-      }],
-    }));
+  function sendChatMessage() {
+    if (!chatInput.trim()) return;
+    const time = new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+    setChatMessages(prev => [...prev, { author: "employer", text: chatInput.trim(), time }]);
+    setChatInput("");
   }
 
   const interview = app.interview;
@@ -430,97 +396,48 @@ export function EmployerApplicationDetail() {
         </Card>
       )}
 
-      {/* Оффер — детали */}
-      {app.offer && !showOfferForm && (
+      {/* Чат с кандидатом */}
+      {showChat && (
         <Card>
-          <SectionHeader title="Оффер" />
+          <SectionHeader
+            title="Чат с кандидатом"
+            action={
+              <button onClick={() => setShowChat(false)} style={{
+                background: "none", border: "none", cursor: "pointer",
+                color: C.sub, fontFamily: F.regular, fontSize: 14,
+              }}>Закрыть</button>
+            }
+          />
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <div style={{ fontFamily: F.regular, fontSize: 12, color: C.sub }}>Зарплата</div>
-                <div style={{ fontFamily: F.bold, fontSize: 18, color: C.green }}>
-                  ₽ {app.offer.salary.toLocaleString()}
+            <div style={{ maxHeight: 300, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, padding: "4px 0" }}>
+              {chatMessages.map((msg, i) => (
+                <div key={i} style={{
+                  alignSelf: msg.author === "employer" ? "flex-end" : "flex-start",
+                  maxWidth: "80%",
+                }}>
+                  <div style={{
+                    background: msg.author === "employer" ? C.green : C.bg,
+                    color: msg.author === "employer" ? "white" : C.text,
+                    borderRadius: 14, padding: "10px 14px",
+                    fontFamily: F.regular, fontSize: 14,
+                  }}>{msg.text}</div>
+                  <div style={{ fontFamily: F.regular, fontSize: 11, color: C.sub, marginTop: 2, textAlign: msg.author === "employer" ? "right" : "left" }}>{msg.time}</div>
                 </div>
-              </div>
-              <StatusBadge
-                label={OFFER_STATUS_LABELS[app.offer.status]}
-                color={OFFER_STATUS_COLORS[app.offer.status]}
-              />
+              ))}
             </div>
-            <div>
-              <div style={{ fontFamily: F.regular, fontSize: 12, color: C.sub }}>Дата выхода</div>
-              <div style={{ fontFamily: F.semi, fontSize: 15, color: C.text }}>{app.offer.startDate}</div>
-            </div>
-            {app.offer.conditions && (
-              <div>
-                <div style={{ fontFamily: F.regular, fontSize: 12, color: C.sub }}>Условия</div>
-                <div style={{ fontFamily: F.regular, fontSize: 14, color: C.text, marginTop: 4 }}>
-                  {app.offer.conditions}
-                </div>
-              </div>
-            )}
-            <div style={{ fontFamily: F.regular, fontSize: 12, color: C.sub }}>
-              Отправлен: {app.offer.sentAt}
-            </div>
-
-            {/* Кнопки статусов оффера */}
-            {app.offer.status === "sent" && (
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
-                <button onClick={() => updateOfferStatus("accepted")} style={{
-                  padding: "8px 16px", borderRadius: 20, border: "none", cursor: "pointer",
-                  background: `${C.green}15`, color: C.green,
-                  fontFamily: F.regular, fontSize: 13,
-                }}>Принят</button>
-                <button onClick={() => updateOfferStatus("declined")} style={{
-                  padding: "8px 16px", borderRadius: 20, border: "none", cursor: "pointer",
-                  background: `${C.red}15`, color: C.red,
-                  fontFamily: F.regular, fontSize: 13,
-                }}>Отклонён</button>
-                <button onClick={() => updateOfferStatus("expired")} style={{
-                  padding: "8px 16px", borderRadius: 20, border: "none", cursor: "pointer",
-                  background: `${C.gray}15`, color: C.gray,
-                  fontFamily: F.regular, fontSize: 13,
-                }}>Истёк</button>
-              </div>
-            )}
-            {app.offer.status === "accepted" && (
-              <div style={{
-                background: `${C.green}10`, borderRadius: 14, padding: "14px 16px",
-                display: "flex", alignItems: "center", gap: 10,
-              }}>
-                <Icon.CheckCircle size={20} color={C.green} />
-                <span style={{ fontFamily: F.regular, fontSize: 14, color: C.green }}>
-                  Кандидат принял оффер и нанят
-                </span>
-              </div>
-            )}
-          </div>
-        </Card>
-      )}
-
-      {/* Форма оффера */}
-      {showOfferForm && (
-        <Card>
-          <SectionHeader title="Отправить оффер" />
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <Input label="Зарплата (₽)" value={offerSalary} onChange={setOfferSalary} placeholder="95000" type="number" />
-            <Input label="Дата выхода" value={offerStartDate} onChange={setOfferStartDate} placeholder="1 февраля 2025" />
-            <div>
-              <div style={{ fontFamily: F.semi, fontSize: 14, color: C.text, marginBottom: 8 }}>Условия</div>
-              <textarea
-                value={offerConditions} onChange={e => setOfferConditions(e.target.value)}
-                placeholder="Оформление по ТК РФ, премии, ДМС, оплата мобильной связи"
+            <div style={{ display: "flex", gap: 8 }}>
+              <input
+                value={chatInput}
+                onChange={e => setChatInput(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter") sendChatMessage(); }}
+                placeholder="Введите сообщение..."
                 style={{
-                  width: "100%", minHeight: 80, padding: "14px 16px",
-                  background: C.bg, border: `1px solid ${C.border}`, borderRadius: 14,
-                  fontFamily: F.regular, fontSize: 15, color: C.text, resize: "vertical",
-                  outline: "none",
+                  flex: 1, padding: "12px 16px", background: C.bg,
+                  border: `1px solid ${C.border}`, borderRadius: 14,
+                  fontFamily: F.regular, fontSize: 15, color: C.text, outline: "none",
                 }}
               />
-            </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <GreenBtn label="Отправить оффер" full icon={<Icon.Send size={16} />} onClick={sendOffer} disabled={!offerSalary || !offerStartDate} />
-              <OutlineBtn label="Отмена" onClick={() => setShowOfferForm(false)} />
+              <GreenBtn label="Отправить" onClick={sendChatMessage} disabled={!chatInput.trim()} />
             </div>
           </div>
         </Card>
@@ -548,10 +465,6 @@ export function EmployerApplicationDetail() {
                 background: evt.type === "rejected" ? C.red
                   : evt.type === "interview_no_show" ? C.red
                   : evt.type === "interview_cancelled" ? C.gray
-                  : evt.type === "offer_sent" ? C.green
-                  : evt.type === "offer_accepted" ? C.green
-                  : evt.type === "offer_declined" ? C.red
-                  : evt.type === "offer_expired" ? C.gray
                   : evt.type === "hired" ? C.green
                   : evt.type === "interview_completed" ? C.green
                   : evt.type === "interview_confirmed" ? C.green
@@ -608,21 +521,12 @@ export function EmployerApplicationDetail() {
           )}
           {app.status === "interview" && interview && (
             <>
-              <GreenBtn label="Сделать оффер" full icon={<Icon.CheckCircle size={16} />} onClick={() => setShowOfferForm(true)} />
+              <GreenBtn label="Нанять" full icon={<Icon.CheckCircle size={16} />} onClick={() => updateStatus("hired")} />
               <OutlineBtn label="Отклонить" full onClick={() => updateStatus("rejected")} />
             </>
           )}
           {app.status === "rejected" && (
             <OutlineBtn label="Вернуть в работу" full onClick={() => updateStatus("pending")} />
-          )}
-          {app.status === "offer" && app.offer && (
-            <div style={{
-              background: `${C.green}10`, borderRadius: 14, padding: "14px 16px",
-              display: "flex", alignItems: "center", gap: 10,
-            }}>
-              <Icon.CheckCircle size={20} color={C.green} />
-              <span style={{ fontFamily: F.regular, fontSize: 14, color: C.green }}>Оффер отправлен кандидату</span>
-            </div>
           )}
           {app.status === "hired" && (
             <div style={{
