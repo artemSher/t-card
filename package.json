@@ -7,7 +7,12 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
-    "format": "oxfmt"
+    "format": "oxfmt",
+    "test:load": "k6 run load-testing/k6/t-card-load.js",
+    "test:soak": "k6 run load-testing/k6/t-card-soak.js",
+    "test:lighthouse": "lhci autorun --config=load-testing/lighthouse/lighthouserc.json",
+    "test:report": "node load-testing/generate-report.mjs",
+    "test:all": "k6 run load-testing/k6/t-card-load.js && k6 run load-testing/k6/t-card-soak.js && lhci autorun --config=load-testing/lighthouse/lighthouserc.json && node load-testing/generate-report.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",

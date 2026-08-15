@@ -1,0 +1,13 @@
+{
+  "testType": "Soak Test (10 минут, 100 VUs)",
+  "testDate": "2026-08-15T16:04:52.334Z",
+  "baseUrl": "https://t-card.vercel.app",
+  "summary": {
+    "totalRequests": "29553",
+    "errorRate": "0.00%",
+    "avgResponseTime": "33ms",
+    "p95ResponseTime": "53ms",
+    "p99ResponseTime": "N/A",
+    "duration": "602s"
+  }
+}
