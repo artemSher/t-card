@@ -1,5 +1,70 @@
 export type Role = "employee" | "employer";
 
+// ─── Vacancy status ──────────────────────────────────────────────────────────
+export type VacancyStatus = "draft" | "active" | "paused" | "closed";
+
+// ─── Publication channel ─────────────────────────────────────────────────────
+export interface PublicationChannel {
+  id: string;
+  name: string;
+  enabled: boolean;
+  publishedAt?: string;
+}
+
+// ─── Interview ───────────────────────────────────────────────────────────────
+export type InterviewFormat = "offline" | "online" | "phone";
+
+// ─── Offer ───────────────────────────────────────────────────────────────────
+export type OfferStatus = "sent" | "accepted" | "declined" | "expired";
+
+export interface Offer {
+  salary: number;
+  startDate: string;
+  conditions: string;
+  status: OfferStatus;
+  sentAt: string;
+}
+export type InterviewStatus =
+  | "scheduled"
+  | "confirmed"
+  | "rescheduled"
+  | "no_show"
+  | "cancelled"
+  | "completed";
+
+export interface Interview {
+  date: string;
+  time: string;
+  format: InterviewFormat;
+  address: string;
+  comment: string;
+  status: InterviewStatus;
+}
+
+// ─── Timeline event ──────────────────────────────────────────────────────────
+export interface TimelineEvent {
+  id: number;
+  type:
+    | "application_created"
+    | "status_changed"
+    | "interview_scheduled"
+    | "interview_confirmed"
+    | "interview_rescheduled"
+    | "interview_no_show"
+    | "interview_cancelled"
+    | "interview_completed"
+    | "offer_sent"
+    | "offer_accepted"
+    | "offer_declined"
+    | "offer_expired"
+    | "hired"
+    | "rejected"
+    | "comment";
+  author: string;
+  timestamp: string;
+  comment?: string;
+}
+
 export type EmployeeTab =
   | "home"
   | "vacancies"
@@ -38,6 +103,26 @@ export interface Vacancy {
   category: string;
   rating?: number;
   reviewsCount?: number;
+  vacancyStatus?: VacancyStatus;
+  channels?: PublicationChannel[];
+  templateId?: number;
+}
+
+// ─── Vacancy template ─────────────────────────────────────────────────────────
+export interface VacancyTemplate {
+  id: number;
+  title: string;
+  category: string;
+  city: string;
+  salaryFrom: number;
+  salaryTo: number;
+  experience: string;
+  grade: number;
+  admissions: string[];
+  shift: string;
+  department: string;
+  description: string;
+  createdAt: string;
 }
 
 // ─── Candidate ──────────────────────────────────────────────────────────────
@@ -66,7 +151,8 @@ export type ApplicationStatus =
   | "invitation"
   | "interview"
   | "rejected"
-  | "offer";
+  | "offer"
+  | "hired";
 
 export interface Application {
   id: number;

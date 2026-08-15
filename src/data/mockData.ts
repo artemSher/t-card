@@ -11,6 +11,15 @@ import type {
   SavedSearch,
   AppSettings,
   User,
+  VacancyStatus,
+  Interview,
+  InterviewStatus,
+  InterviewFormat,
+  TimelineEvent,
+  PublicationChannel,
+  Offer,
+  OfferStatus,
+  VacancyTemplate,
 } from "@/types";
 
 // ─── Design tokens (сохраняем из оригинала) ──────────────────────────────────
@@ -631,6 +640,7 @@ export const APPLICATION_STATUS_LABELS: Record<string, string> = {
   interview: "Собеседование",
   rejected: "Отклонено",
   offer: "Оффер",
+  hired: "Нанят",
 };
 
 export const APPLICATION_STATUS_COLORS: Record<string, string> = {
@@ -639,6 +649,92 @@ export const APPLICATION_STATUS_COLORS: Record<string, string> = {
   interview: C.blue,
   rejected: C.red,
   offer: C.green,
+  hired: C.green,
+};
+
+// ─── Статусы вакансий ────────────────────────────────────────────────────────
+export const VACANCY_STATUS_LABELS: Record<VacancyStatus, string> = {
+  draft: "Черновик",
+  active: "Активна",
+  paused: "Пауза",
+  closed: "Закрыта",
+};
+
+export const VACANCY_STATUS_COLORS: Record<VacancyStatus, string> = {
+  draft: C.gray,
+  active: C.green,
+  paused: C.amber,
+  closed: C.red,
+};
+
+// ─── Каналы публикации ───────────────────────────────────────────────────────
+export const PUBLICATION_CHANNELS: { id: string; name: string }[] = [
+  { id: "platform", name: "Платформа Т-Card" },
+  { id: "hh", name: "hh.ru" },
+  { id: "telegram", name: "Telegram-канал" },
+  { id: "vk", name: "ВКонтакте" },
+  { id: "avito", name: "Авито Работа" },
+  { id: "referral", name: "Рекомендации сотрудников" },
+];
+
+// ─── Форматы собеседования ───────────────────────────────────────────────────
+export const INTERVIEW_FORMAT_LABELS: Record<InterviewFormat, string> = {
+  offline: "Очно",
+  online: "Онлайн (видео)",
+  phone: "Телефон",
+};
+
+// ─── Статусы собеседования ───────────────────────────────────────────────────
+export const INTERVIEW_STATUS_LABELS: Record<InterviewStatus, string> = {
+  scheduled: "Запланировано",
+  confirmed: "Подтверждено",
+  rescheduled: "Перенесено",
+  no_show: "Не явился",
+  cancelled: "Отменено",
+  completed: "Завершено",
+};
+
+export const INTERVIEW_STATUS_COLORS: Record<InterviewStatus, string> = {
+  scheduled: C.blue,
+  confirmed: C.green,
+  rescheduled: C.amber,
+  no_show: C.red,
+  cancelled: C.gray,
+  completed: C.green,
+};
+
+// ─── Лейблы событий таймлайна ────────────────────────────────────────────────
+export const TIMELINE_EVENT_LABELS: Record<string, string> = {
+  application_created: "Отклик отправлен",
+  status_changed: "Статус изменён",
+  interview_scheduled: "Собеседование назначено",
+  interview_confirmed: "Собеседование подтверждено",
+  interview_rescheduled: "Собеседование перенесено",
+  interview_no_show: "Кандидат не явился",
+  interview_cancelled: "Собеседование отменено",
+  interview_completed: "Собеседование завершено",
+  offer_sent: "Оффер отправлен",
+  offer_accepted: "Оффер принят",
+  offer_declined: "Оффер отклонён",
+  offer_expired: "Оффер истёк",
+  hired: "Кандидат нанят",
+  rejected: "Отклонено",
+  comment: "Комментарий",
+};
+
+// ─── Статусы оффера ───────────────────────────────────────────────────────────
+export const OFFER_STATUS_LABELS: Record<OfferStatus, string> = {
+  sent: "Отправлен",
+  accepted: "Принят",
+  declined: "Отклонён",
+  expired: "Истёк",
+};
+
+export const OFFER_STATUS_COLORS: Record<OfferStatus, string> = {
+  sent: C.blue,
+  accepted: C.green,
+  declined: C.red,
+  expired: C.gray,
 };
 
 // ─── Данные работодателя ─────────────────────────────────────────────────────
@@ -665,6 +761,15 @@ export const MOCK_EMPLOYER_VACANCIES: Vacancy[] = [
     category: "Промышленность",
     rating: 4.8,
     reviewsCount: 48,
+    vacancyStatus: "active",
+    channels: [
+      { id: "platform", name: "Платформа Т-Card", enabled: true, publishedAt: "17 января 2025" },
+      { id: "hh", name: "hh.ru", enabled: true, publishedAt: "17 января 2025" },
+      { id: "telegram", name: "Telegram-канал", enabled: false },
+      { id: "vk", name: "ВКонтакте", enabled: false },
+      { id: "avito", name: "Авито Работа", enabled: false },
+      { id: "referral", name: "Рекомендации сотрудников", enabled: false },
+    ],
   },
   {
     id: 102,
@@ -686,6 +791,15 @@ export const MOCK_EMPLOYER_VACANCIES: Vacancy[] = [
     category: "Промышленность",
     rating: 4.8,
     reviewsCount: 48,
+    vacancyStatus: "active",
+    channels: [
+      { id: "platform", name: "Платформа Т-Card", enabled: true, publishedAt: "15 января 2025" },
+      { id: "hh", name: "hh.ru", enabled: false },
+      { id: "telegram", name: "Telegram-канал", enabled: true, publishedAt: "15 января 2025" },
+      { id: "vk", name: "ВКонтакте", enabled: false },
+      { id: "avito", name: "Авито Работа", enabled: false },
+      { id: "referral", name: "Рекомендации сотрудников", enabled: false },
+    ],
   },
   {
     id: 103,
@@ -707,6 +821,15 @@ export const MOCK_EMPLOYER_VACANCIES: Vacancy[] = [
     category: "Промышленность",
     rating: 4.8,
     reviewsCount: 48,
+    vacancyStatus: "paused",
+    channels: [
+      { id: "platform", name: "Платформа Т-Card", enabled: true, publishedAt: "10 января 2025" },
+      { id: "hh", name: "hh.ru", enabled: false },
+      { id: "telegram", name: "Telegram-канал", enabled: false },
+      { id: "vk", name: "ВКонтакте", enabled: false },
+      { id: "avito", name: "Авито Работа", enabled: false },
+      { id: "referral", name: "Рекомендации сотрудников", enabled: false },
+    ],
   },
 ];
 
@@ -726,6 +849,9 @@ export interface EmployerApplication {
   assessments: { name: string; score: number }[];
   admissions: string[];
   shift: string;
+  interview?: Interview;
+  offer?: Offer;
+  timeline: TimelineEvent[];
 }
 
 export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
@@ -748,6 +874,19 @@ export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
     ],
     admissions: ["Электробезопасность II", "Работы на высоте"],
     shift: "2/2",
+    interview: {
+      date: "22 января 2025",
+      time: "14:00",
+      format: "offline",
+      address: "Екатеринбург, ул. Промышленная, 15, переговорная №3",
+      comment: "Возьмите паспорт и удостоверение оператора ЧПУ",
+      status: "scheduled",
+    },
+    timeline: [
+      { id: 1, type: "application_created", author: "Иван Петров", timestamp: "17 января 2025, 18:30" },
+      { id: 2, type: "status_changed", author: "Анна Смирнова", timestamp: "18 января 2025, 10:15", comment: "Скрининг пройден" },
+      { id: 3, type: "interview_scheduled", author: "Анна Смирнова", timestamp: "18 января 2025, 11:00", comment: "Назначено собеседование на 22 января 14:00" },
+    ],
   },
   {
     id: 202,
@@ -768,6 +907,10 @@ export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
     ],
     admissions: ["Электробезопасность II"],
     shift: "2/2",
+    timeline: [
+      { id: 1, type: "application_created", author: "Сергей Волков", timestamp: "16 января 2025, 12:00" },
+      { id: 2, type: "status_changed", author: "Анна Смирнова", timestamp: "17 января 2025, 09:30", comment: "Скрининг пройден, приглашаем на собеседование" },
+    ],
   },
   {
     id: 203,
@@ -788,6 +931,9 @@ export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
     ],
     admissions: ["Электробезопасность III", "Промышленная безопасность"],
     shift: "5/2",
+    timeline: [
+      { id: 1, type: "application_created", author: "Дмитрий Соколов", timestamp: "15 января 2025, 14:20" },
+    ],
   },
   {
     id: 204,
@@ -808,6 +954,9 @@ export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
     ],
     admissions: ["Электробезопасность II"],
     shift: "5/2",
+    timeline: [
+      { id: 1, type: "application_created", author: "Алексей Морозов", timestamp: "14 января 2025, 16:45" },
+    ],
   },
   {
     id: 205,
@@ -828,6 +977,10 @@ export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
     ],
     admissions: ["Электробезопасность II"],
     shift: "2/2",
+    timeline: [
+      { id: 1, type: "application_created", author: "Максим Кузнецов", timestamp: "13 января 2025, 11:00" },
+      { id: 2, type: "rejected", author: "Анна Смирнова", timestamp: "14 января 2025, 10:30", comment: "Не соответствует требованиям по разряду" },
+    ],
   },
 ];
 
@@ -903,3 +1056,82 @@ export const DEFAULT_EMPLOYER_SETTINGS: AppSettings = {
   email: "hr@promtech.ru",
   name: "Анна Смирнова",
 };
+
+// ─── Шаблоны вакансий ─────────────────────────────────────────────────────────
+export const MOCK_VACANCY_TEMPLATES: VacancyTemplate[] = [
+  {
+    id: 1,
+    title: "Оператор ЧПУ",
+    category: "Промышленность",
+    city: "Екатеринбург",
+    salaryFrom: 80000,
+    salaryTo: 120000,
+    experience: "Опыт 3 года",
+    grade: 4,
+    admissions: ["Электробезопасность II", "Работы на высоте"],
+    shift: "2/2",
+    department: "Цех №3 — участок наладки",
+    description: "Наладка и обслуживание станков с ЧПУ. Работа по чертежам, контроль качества продукции.",
+    createdAt: "10 января 2025",
+  },
+  {
+    id: 2,
+    title: "Наладчик оборудования",
+    category: "Промышленность",
+    city: "Екатеринбург",
+    salaryFrom: 90000,
+    salaryTo: 140000,
+    experience: "Опыт 5 лет",
+    grade: 5,
+    admissions: ["Электробезопасность III", "Промышленная безопасность"],
+    shift: "5/2",
+    department: "Цех №1 — ремонтный участок",
+    description: "Наладка и ремонт промышленного оборудования. Чтение кинематических и гидравлических схем.",
+    createdAt: "10 января 2025",
+  },
+  {
+    id: 3,
+    title: "Сварщик",
+    category: "Промышленность",
+    city: "Екатеринбург",
+    salaryFrom: 70000,
+    salaryTo: 110000,
+    experience: "Опыт 2 года",
+    grade: 4,
+    admissions: ["Электробезопасность II", "Промышленная безопасность", "Работы на высоте"],
+    shift: "2/2",
+    department: "Цех №2 — сварочный участок",
+    description: "Ручная дуговая и полуавтоматическая сварка. Работа по чертежам и технологическим картам.",
+    createdAt: "12 января 2025",
+  },
+  {
+    id: 4,
+    title: "Инженер-конструктор",
+    category: "Промышленность",
+    city: "Екатеринбург",
+    salaryFrom: 90000,
+    salaryTo: 130000,
+    experience: "Опыт 4 года",
+    grade: 0,
+    admissions: ["Промышленная безопасность"],
+    shift: "5/2",
+    department: "Конструкторское бюро",
+    description: "Проектирование технологической оснастки и приспособлений. Работа в САПР.",
+    createdAt: "12 января 2025",
+  },
+  {
+    id: 5,
+    title: "Слесарь-ремонтник",
+    category: "Промышленность",
+    city: "Екатеринбург",
+    salaryFrom: 60000,
+    salaryTo: 95000,
+    experience: "Опыт 2 года",
+    grade: 4,
+    admissions: ["Электробезопасность II"],
+    shift: "5/2",
+    department: "Цех №1 — ремонтный участок",
+    description: "Ремонт и обслуживание промышленного оборудования. Замена узлов и деталей, регулировка механизмов.",
+    createdAt: "14 января 2025",
+  },
+];
