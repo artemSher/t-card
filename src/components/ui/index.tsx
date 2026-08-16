@@ -19,19 +19,22 @@ export function GreenBtn({ label, onClick, full, disabled, icon }: {
   );
 }
 
-export function OutlineBtn({ label, onClick, full, icon }: {
-  label: string; onClick?: () => void; full?: boolean; icon?: React.ReactNode;
+export function OutlineBtn({ label, onClick, full, icon, active }: {
+  label: string; onClick?: () => void; full?: boolean; icon?: React.ReactNode; active?: boolean;
 }) {
   return (
     <button onClick={onClick} style={{
-      background: "white", color: C.muted, fontFamily: F.regular, fontSize: 14,
-      borderRadius: 20, padding: "9px 18px", border: `1px solid ${C.border}`,
-      cursor: "pointer", transition: "background 0.15s",
+      background: active ? `${C.green}14` : "white",
+      color: active ? C.green : C.muted,
+      fontFamily: F.regular, fontSize: 14,
+      borderRadius: 20, padding: "9px 18px",
+      border: `1px solid ${active ? C.green : C.border}`,
+      cursor: "pointer", transition: "background 0.15s, border-color 0.15s, color 0.15s",
       width: full ? "100%" : undefined,
       display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
     }}
-      onMouseOver={e => (e.currentTarget.style.background = "#f7f7f7")}
-      onMouseOut={e => (e.currentTarget.style.background = "white")}
+      onMouseOver={e => (e.currentTarget.style.background = active ? `${C.green}22` : "#f7f7f7")}
+      onMouseOut={e => (e.currentTarget.style.background = active ? `${C.green}14` : "white")}
     >{label}{icon}</button>
   );
 }

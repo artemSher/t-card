@@ -193,7 +193,7 @@ export function SettingsPage() {
       </button>
 
       {/* Сохранить изменения */}
-      <GreenBtn label="Сохранить изменения" full onClick={() => navigate("/employee/settings")} />
+      <GreenBtn label="Сохранить изменения" full onClick={() => navigate("/employee")} />
     </div>
   );
 }

@@ -139,7 +139,7 @@ export function VacancyDetail() {
       status: "pending",
       stages: [
         { name: "Отклик отправлен", date: new Date().toLocaleDateString("ru-RU"), done: true },
-        { name: "Скрининг", date: "", done: false },
+        { name: "Рассмотрение", date: "", done: false },
         { name: "Собеседование", date: "", done: false },
       ],
     });
@@ -216,10 +216,6 @@ export function VacancyDetail() {
               </span>
             </div>
           </div>
-          <button onClick={() => navigate(`/employee/vacancies?company=${encodeURIComponent(job.company)}`)} style={{
-            background: C.bg, border: `1px solid ${C.border}`, borderRadius: 16,
-            padding: "8px 16px", cursor: "pointer", fontFamily: F.regular, fontSize: 13, color: C.muted,
-          }}>Отзывы</button>
         </div>
       </Card>
 

@@ -9,9 +9,8 @@ import type { ApplicationStatus } from "@/types";
 const STATUS_FILTERS: { id: ApplicationStatus | "all"; label: string }[] = [
   { id: "all", label: "Все" },
   { id: "pending", label: "Ожидание" },
-  { id: "invitation", label: "Приглашение" },
   { id: "interview", label: "Собеседование" },
-  { id: "rejected", label: "Отклонено" },
+  { id: "rejected", label: "Отказ" },
 ];
 
 export function ApplicationList() {
@@ -134,14 +133,9 @@ export function ApplicationDetail() {
             background: C.bg, borderRadius: 14, padding: "16px 18px",
             fontFamily: F.regular, fontSize: 14, color: C.muted, lineHeight: "22px",
           }}>
-            <p style={{ margin: "0 0 10px" }}>Здравствуйте!</p>
-            <p style={{ margin: "0 0 10px" }}>
-              Благодарим вас за отклик на вакансию «{app.vacancyTitle}». Мы внимательно рассмотрели ваше резюме.
+            <p style={{ margin: "0" }}>
+              Спасибо за ваш отклик. К сожалению, сейчас мы не готовы предложить вам эту вакансию.
             </p>
-            <p style={{ margin: "0 0 10px" }}>
-              К сожалению, на данный момент мы не можем предложить вам эту позицию. Ваш профиль сохранён в нашей базе, и мы свяжемся с вами при появлении подходящих вакансий.
-            </p>
-            <p style={{ margin: "0" }}>С уважением, команда {app.company}</p>
           </div>
         </Card>
       )}

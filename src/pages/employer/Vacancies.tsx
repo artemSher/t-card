@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { C, F, MOCK_EMPLOYER_VACANCIES, SPECIALTIES, CATEGORIES, ADMISSIONS, SHIFTS, GRADES, MOCK_COMPANY, VACANCY_STATUS_LABELS, VACANCY_STATUS_COLORS, PUBLICATION_CHANNELS, MOCK_VACANCY_TEMPLATES } from "@/data/mockData";
+import { C, F, MOCK_EMPLOYER_VACANCIES, SPECIALTIES, CATEGORIES, ADMISSIONS, SHIFTS, GRADES, MOCK_COMPANY, VACANCY_STATUS_LABELS, VACANCY_STATUS_COLORS, MOCK_VACANCY_TEMPLATES } from "@/data/mockData";
 import { Icon } from "@/components/icons/Icons";
-import { Card, GreenBtn, OutlineBtn, StatusBadge, EmptyState, SectionHeader, Input, Select, Chip, Toggle, SuccessScreen } from "@/components/ui";
+import { Card, GreenBtn, OutlineBtn, StatusBadge, EmptyState, SectionHeader, Input, Select, Chip, SuccessScreen } from "@/components/ui";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import type { Vacancy, VacancyStatus, PublicationChannel, VacancyTemplate } from "@/types";
+import type { Vacancy, VacancyStatus, VacancyTemplate } from "@/types";
 
 // ─── Список вакансий ─────────────────────────────────────────────────────────
 export function EmployerVacancyList() {
@@ -12,11 +12,16 @@ export function EmployerVacancyList() {
   const [vacancies, setVacancies] = useLocalStorage<Vacancy[]>("tcard:employer:vacancies", MOCK_EMPLOYER_VACANCIES);
   const [templates, setTemplates] = useLocalStorage<VacancyTemplate[]>("tcard:employer:templates", MOCK_VACANCY_TEMPLATES);
   const [filter, setFilter] = useState<VacancyStatus | "all">("all");
+  const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [showTemplates, setShowTemplates] = useState(false);
 
   const getStatus = (v: Vacancy): VacancyStatus => v.vacancyStatus ?? (v.active ? "active" : "closed");
 
-  const filtered = filter === "all" ? vacancies : vacancies.filter(v => getStatus(v) === filter);
+  const filtered = vacancies.filter(v => {
+    const statusMatch = filter === "all" || getStatus(v) === filter;
+    const deptMatch = departmentFilter === "all" || v.department === departmentFilter;
+    return statusMatch && deptMatch;
+  });
 
   function updateVacancyStatus(id: number, status: VacancyStatus) {
     setVacancies(prev => prev.map(v => v.id === id ? {
@@ -41,7 +46,6 @@ export function EmployerVacancyList() {
       department: t.department, description: t.description,
       admissions: t.admissions, active: false,
       vacancyStatus: "draft",
-      channels: PUBLICATION_CHANNELS.map(c => ({ id: c.id, name: c.name, enabled: false })),
       templateId: t.id,
       date: new Date().toLocaleDateString("ru-RU"),
       views: 0, responses: 0,
@@ -75,16 +79,26 @@ export function EmployerVacancyList() {
       </div>
 
       {/* Фильтры */}
-      <div style={{ display: "flex", gap: 8 }}>
-        {STATUS_TABS.map(t => (
-          <button key={t.key} onClick={() => setFilter(t.key)} style={{
-            padding: "8px 16px", borderRadius: 20, border: "none", cursor: "pointer",
-            background: filter === t.key ? C.green : C.bg,
-            color: filter === t.key ? "white" : C.sub,
-            fontFamily: F.regular, fontSize: 14,
-            transition: "all 0.2s",
-          }}>{t.label}</button>
-        ))}
+      <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 8 }}>
+          {STATUS_TABS.map(t => (
+            <button key={t.key} onClick={() => setFilter(t.key)} style={{
+              padding: "8px 16px", borderRadius: 20, border: "none", cursor: "pointer",
+              background: filter === t.key ? C.green : C.bg,
+              color: filter === t.key ? "white" : C.sub,
+              fontFamily: F.regular, fontSize: 14,
+              transition: "all 0.2s",
+            }}>{t.label}</button>
+          ))}
+        </div>
+        <Select
+          value={departmentFilter}
+          onChange={setDepartmentFilter}
+          options={[
+            { value: "all", label: "Все подразделения" },
+            ...MOCK_COMPANY.departments.map(d => ({ value: d, label: d })),
+          ]}
+        />
       </div>
 
       {/* Список */}
@@ -136,18 +150,6 @@ export function EmployerVacancyList() {
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {v.admissions.map(a => <Chip key={a} label={a} />)}
               </div>
-
-              {/* Каналы публикации */}
-              {v.channels && v.channels.some(ch => ch.enabled) && (
-                <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 10 }}>
-                  {v.channels.filter(ch => ch.enabled).map(ch => (
-                    <span key={ch.id} style={{
-                      fontSize: 11, fontFamily: F.regular, color: C.sub,
-                      background: C.bg, padding: "4px 10px", borderRadius: 8,
-                    }}>{ch.name}</span>
-                  ))}
-                </div>
-              )}
 
               <div style={{ display: "flex", gap: 8, marginTop: 14, borderTop: `1px solid ${C.border}`, paddingTop: 14, flexWrap: "wrap" }}>
                 {/* Quick status switchers */}
@@ -258,18 +260,6 @@ export function EmployerVacancyDetail() {
     } : v));
   }
 
-  function toggleChannel(channelId: string) {
-    setVacancies(prev => prev.map(v => {
-      if (v.id !== vacancy!.id) return v;
-      const channels = v.channels ? v.channels.map(ch =>
-        ch.id === channelId
-          ? { ...ch, enabled: !ch.enabled, publishedAt: !ch.enabled ? new Date().toLocaleDateString("ru-RU") : undefined }
-          : ch
-      ) : [];
-      return { ...v, channels };
-    }));
-  }
-
   const STATUS_BUTTONS: { key: VacancyStatus; label: string }[] = [
     { key: "draft", label: "Черновик" },
     { key: "active", label: "Активна" },
@@ -361,35 +351,6 @@ export function EmployerVacancyDetail() {
         </div>
       </Card>
 
-      {/* Модуль публикации */}
-      <Card>
-        <SectionHeader title="Публикация" />
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {(vacancy.channels ?? PUBLICATION_CHANNELS.map(c => ({ id: c.id, name: c.name, enabled: false } as PublicationChannel))).map(ch => (
-            <div key={ch.id} style={{
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "12px 14px", background: C.bg, borderRadius: 12,
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <Toggle checked={ch.enabled} onChange={() => toggleChannel(ch.id)} />
-                <div>
-                  <div style={{ fontFamily: F.semi, fontSize: 14, color: C.text }}>{ch.name}</div>
-                  {ch.publishedAt && (
-                    <div style={{ fontFamily: F.regular, fontSize: 12, color: C.sub }}>
-                      Опубликовано: {ch.publishedAt}
-                    </div>
-                  )}
-                </div>
-              </div>
-              {ch.enabled ? (
-                <span style={{ fontFamily: F.regular, fontSize: 12, color: C.green }}>Активно</span>
-              ) : (
-                <span style={{ fontFamily: F.regular, fontSize: 12, color: C.sub }}>Выключено</span>
-              )}
-            </div>
-          ))}
-        </div>
-      </Card>
     </div>
   );
 }
@@ -414,9 +375,6 @@ export function EmployerVacancyEditor() {
   const [description, setDescription] = useState(existing?.description ?? "");
   const [admissions, setAdmissions] = useState<string[]>(existing?.admissions ?? []);
   const [vacancyStatus, setVacancyStatus] = useState<VacancyStatus>(existing?.vacancyStatus ?? "draft");
-  const [channels, setChannels] = useState<PublicationChannel[]>(
-    existing?.channels ?? PUBLICATION_CHANNELS.map(c => ({ id: c.id, name: c.name, enabled: c.id === "platform" }))
-  );
   const [saved, setSaved] = useState(false);
   const [savedAsTemplate, setSavedAsTemplate] = useState(false);
 
@@ -435,7 +393,6 @@ export function EmployerVacancyEditor() {
       experience, grade: Number(grade), shift, department, description,
       admissions, active: vacancyStatus === "active",
       vacancyStatus,
-      channels,
       date: new Date().toLocaleDateString("ru-RU"),
       views: existing?.views ?? 0,
       responses: existing?.responses ?? 0,

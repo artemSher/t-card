@@ -15,9 +15,9 @@ import type { EmployerApplication } from "@/data/mockData";
 const STATUS_FILTERS: { key: ApplicationStatus | "all"; label: string }[] = [
   { key: "all", label: "Все" },
   { key: "pending", label: "Ожидание" },
+  { key: "invitation", label: "Приглашение" },
   { key: "interview", label: "Собеседование" },
   { key: "rejected", label: "Отказ" },
-  { key: "hired", label: "Нанятые" },
 ];
 
 // ─── Список откликов ─────────────────────────────────────────────────────────
@@ -69,7 +69,6 @@ export function EmployerApplicationList() {
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <span style={{ fontFamily: F.semi, fontSize: 16, color: C.text }}>{app.candidateName}</span>
-                    {app.candidateGradeConfirmed && <Icon.Verified size={16} />}
                   </div>
                   <div style={{ fontFamily: F.regular, fontSize: 13, color: C.sub, marginTop: 4 }}>
                     {app.vacancyTitle} · {app.candidateExperience} · {app.candidateCity}
@@ -90,6 +89,13 @@ export function EmployerApplicationList() {
                 {app.admissions.slice(0, 2).map(a => <Chip key={a} label={a} />)}
                 {app.admissions.length > 2 && <Chip label={`+${app.admissions.length - 2}`} />}
               </div>
+              {app.candidateDescription && (
+                <div style={{
+                  fontFamily: F.regular, fontSize: 13, color: C.sub, marginTop: 10,
+                  lineHeight: "20px", overflow: "hidden", textOverflow: "ellipsis",
+                  display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+                }}>{app.candidateDescription}</div>
+              )}
             </Card>
           ))}
         </div>
@@ -115,6 +121,10 @@ export function EmployerApplicationDetail() {
 
   // Offer form state — removed
 
+  // Invite form state
+  const [showInviteForm, setShowInviteForm] = useState(false);
+  const [inviteComment, setInviteComment] = useState("");
+
   // Chat state
   const [showChat, setShowChat] = useState(false);
   const [chatMessages, setChatMessages] = useState<{ author: "employer" | "candidate"; text: string; time: string }[]>([]);
@@ -129,10 +139,8 @@ export function EmployerApplicationDetail() {
   }
 
   function updateStatus(status: ApplicationStatus) {
-    const eventType: TimelineEvent["type"] = status === "rejected" ? "rejected" : status === "hired" ? "hired" : "status_changed";
-    const eventComment = status === "invitation" ? "Приглашение на собеседование"
-      : status === "interview" ? "Собеседование назначено"
-      : status === "hired" ? "Кандидат нанят"
+    const eventType: TimelineEvent["type"] = status === "rejected" ? "rejected" : "status_changed";
+    const eventComment = status === "interview" ? "Собеседование назначено"
       : status === "rejected" ? "Отклонено"
       : "Возвращён в работу";
     updateApp(a => ({
@@ -146,10 +154,25 @@ export function EmployerApplicationDetail() {
         comment: eventComment,
       }],
     }));
-    if (status === "invitation") {
-      setShowChat(true);
-      setChatMessages([{ author: "employer", text: "Здравствуйте! Приглашаем вас на собеседование.", time: new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }) }]);
-    }
+  }
+
+  function sendInvite() {
+    const comment = inviteComment.trim() || "Приглашение на собеседование";
+    updateApp(a => ({
+      ...a,
+      status: "invitation",
+      timeline: [...a.timeline, {
+        id: Date.now(),
+        type: "status_changed",
+        author: "Анна Смирнова",
+        timestamp: new Date().toLocaleString("ru-RU"),
+        comment,
+      }],
+    }));
+    setShowInviteForm(false);
+    setInviteComment("");
+    setShowChat(true);
+    setChatMessages([{ author: "employer", text: comment, time: new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }) }]);
   }
 
   function scheduleInterview() {
@@ -223,7 +246,6 @@ export function EmployerApplicationDetail() {
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontFamily: F.semi, fontSize: 18, color: C.text }}>{app.candidateName}</span>
-              {app.candidateGradeConfirmed && <Icon.Verified size={16} />}
             </div>
             <div style={{ fontFamily: F.regular, fontSize: 13, color: C.sub, marginTop: 4 }}>
               {app.vacancyTitle} · {app.date}
@@ -259,6 +281,16 @@ export function EmployerApplicationDetail() {
           color={APPLICATION_STATUS_COLORS[app.status]}
         />
       </Card>
+
+      {/* О кандидате */}
+      {app.candidateDescription && (
+        <Card>
+          <SectionHeader title="О кандидате" />
+          <div style={{ fontFamily: F.regular, fontSize: 15, color: C.text, lineHeight: "22px" }}>
+            {app.candidateDescription}
+          </div>
+        </Card>
+      )}
 
       {/* Результаты оценок */}
       <Card>
@@ -353,6 +385,32 @@ export function EmployerApplicationDetail() {
                 }}>Завершено</button>
               </div>
             )}
+          </div>
+        </Card>
+      )}
+
+      {/* Форма приглашения на собеседование */}
+      {showInviteForm && (
+        <Card>
+          <SectionHeader title="Приглашение на собеседование" />
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div>
+              <div style={{ fontFamily: F.semi, fontSize: 14, color: C.text, marginBottom: 8 }}>Комментарий кандидату</div>
+              <textarea
+                value={inviteComment} onChange={e => setInviteComment(e.target.value)}
+                placeholder="Здравствуйте! Приглашаем вас на собеседование."
+                style={{
+                  width: "100%", minHeight: 80, padding: "14px 16px",
+                  background: C.bg, border: `1px solid ${C.border}`, borderRadius: 14,
+                  fontFamily: F.regular, fontSize: 15, color: C.text, resize: "vertical",
+                  outline: "none",
+                }}
+              />
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <GreenBtn label="Отправить" full onClick={sendInvite} />
+              <OutlineBtn label="Отмена" onClick={() => setShowInviteForm(false)} />
+            </div>
           </div>
         </Card>
       )}
@@ -497,7 +555,7 @@ export function EmployerApplicationDetail() {
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {app.status === "pending" && (
             <>
-              <GreenBtn label="Пригласить на собеседование" full icon={<Icon.Send size={16} />} onClick={() => updateStatus("invitation")} />
+              <GreenBtn label="Пригласить на собеседование" full icon={<Icon.Send size={16} />} onClick={() => setShowInviteForm(true)} />
               <OutlineBtn label="Отклонить" full onClick={() => updateStatus("rejected")} />
             </>
           )}
@@ -520,22 +578,10 @@ export function EmployerApplicationDetail() {
             </>
           )}
           {app.status === "interview" && interview && (
-            <>
-              <GreenBtn label="Нанять" full icon={<Icon.CheckCircle size={16} />} onClick={() => updateStatus("hired")} />
-              <OutlineBtn label="Отклонить" full onClick={() => updateStatus("rejected")} />
-            </>
+            <OutlineBtn label="Отклонить" full onClick={() => updateStatus("rejected")} />
           )}
           {app.status === "rejected" && (
             <OutlineBtn label="Вернуть в работу" full onClick={() => updateStatus("pending")} />
-          )}
-          {app.status === "hired" && (
-            <div style={{
-              background: `${C.green}10`, borderRadius: 14, padding: "14px 16px",
-              display: "flex", alignItems: "center", gap: 10,
-            }}>
-              <Icon.CheckCircle size={20} color={C.green} />
-              <span style={{ fontFamily: F.regular, fontSize: 14, color: C.green }}>Кандидат нанят</span>
-            </div>
           )}
         </div>
       </Card>

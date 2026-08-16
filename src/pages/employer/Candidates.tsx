@@ -205,7 +205,6 @@ export function CandidateList() {
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <span style={{ fontFamily: F.semi, fontSize: 16, color: C.text }}>{c.name}</span>
-                    {c.gradeConfirmed && <Icon.Verified size={16} />}
                   </div>
                   <div style={{ fontFamily: F.regular, fontSize: 13, color: C.sub, marginTop: 4 }}>
                     {c.specialty} · {c.grade} разряд · {c.experience} · {c.city}
@@ -268,7 +267,6 @@ export function CandidateDetail() {
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontFamily: F.semi, fontSize: 20, color: C.text }}>{candidate.name}</span>
-              {candidate.gradeConfirmed && <Icon.Verified size={18} />}
             </div>
             <div style={{ fontFamily: F.regular, fontSize: 14, color: C.sub, marginTop: 4 }}>
               {candidate.specialty} · {candidate.grade} разряд · {candidate.city}
@@ -283,7 +281,7 @@ export function CandidateDetail() {
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <GreenBtn label={invited ? "Приглашено" : "Пригласить"} icon={<Icon.Send size={16} />} onClick={() => setInvited(true)} disabled={invited} />
-          <OutlineBtn label={favorited ? "В избранном" : "В избранное"} icon={<Icon.Bookmark size={16} />} onClick={() => setFavorited(!favorited)} />
+          <OutlineBtn label={favorited ? "В избранном" : "В избранное"} icon={<Icon.Bookmark size={16} />} onClick={() => setFavorited(!favorited)} active={favorited} />
         </div>
       </Card>
 

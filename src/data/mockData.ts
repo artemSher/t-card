@@ -123,7 +123,6 @@ export const ITR_REQUIREMENTS = [
   "ГОСТ",
   "Сапр",
   "Грейд 5",
-  "Грейд 6",
   "Грейд 7",
   "Грейд 8",
 ];
@@ -332,7 +331,7 @@ export const MOCK_VACANCIES: Vacancy[] = [
     rating: 4.8,
     reviewsCount: 48,
     isITR: true,
-    itrRequirements: ["ЕСКД", "ГОСТ", "Сапр", "Грейд 6"],
+    itrRequirements: ["ЕСКД", "ГОСТ", "Сапр", "Грейд 7"],
   },
 ];
 
@@ -441,7 +440,7 @@ export const MOCK_APPLICATIONS: Application[] = [
     status: "interview",
     stages: [
       { name: "Отклик отправлен", date: "17 января 2025", done: true },
-      { name: "Скрининг", date: "18 января 2025", done: true },
+      { name: "Рассмотрение", date: "18 января 2025", done: true },
       { name: "Собеседование", date: "22 января 2025", done: false },
     ],
   },
@@ -454,8 +453,7 @@ export const MOCK_APPLICATIONS: Application[] = [
     status: "invitation",
     stages: [
       { name: "Отклик отправлен", date: "15 января 2025", done: true },
-      { name: "Скрининг", date: "16 января 2025", done: true },
-      { name: "Приглашение на собеседование", date: "17 января 2025", done: false },
+      { name: "Рассмотрение", date: "16 января 2025", done: true },
       { name: "Собеседование", date: "", done: false },
     ],
   },
@@ -468,7 +466,7 @@ export const MOCK_APPLICATIONS: Application[] = [
     status: "pending",
     stages: [
       { name: "Отклик отправлен", date: "13 января 2025", done: true },
-      { name: "Скрининг", date: "", done: false },
+      { name: "Рассмотрение", date: "", done: false },
       { name: "Собеседование", date: "", done: false },
     ],
   },
@@ -481,7 +479,7 @@ export const MOCK_APPLICATIONS: Application[] = [
     status: "rejected",
     stages: [
       { name: "Отклик отправлен", date: "10 января 2025", done: true },
-      { name: "Скрининг", date: "11 января 2025", done: true },
+      { name: "Рассмотрение", date: "11 января 2025", done: true },
       { name: "Отказ", date: "12 января 2025", done: true },
     ],
   },
@@ -974,6 +972,7 @@ export interface EmployerApplication {
   candidateGradeConfirmed: boolean;
   candidateCity: string;
   candidateExperience: string;
+  candidateDescription?: string;
   matchPercent: number;
   vacancyId: number;
   vacancyTitle: string;
@@ -994,6 +993,7 @@ export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
     candidateGradeConfirmed: true,
     candidateCity: "Екатеринбург",
     candidateExperience: "6 лет",
+    candidateDescription: "Опыт работы на станках ЧПУ Haas и Fanuc. Наладка многоосевых станков, чтение G-кода. Работал в серийном производстве 6 лет.",
     matchPercent: 95,
     vacancyId: 101,
     vacancyTitle: "Оператор ЧПУ",
@@ -1016,7 +1016,7 @@ export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
     },
     timeline: [
       { id: 1, type: "application_created", author: "Иван Петров", timestamp: "17 января 2025, 18:30" },
-      { id: 2, type: "status_changed", author: "Анна Смирнова", timestamp: "18 января 2025, 10:15", comment: "Скрининг пройден" },
+      { id: 2, type: "status_changed", author: "Анна Смирнова", timestamp: "18 января 2025, 10:15", comment: "Рассмотрение пройдено" },
       { id: 3, type: "interview_scheduled", author: "Анна Смирнова", timestamp: "18 января 2025, 11:00", comment: "Назначено собеседование на 22 января 14:00" },
     ],
   },
@@ -1027,6 +1027,7 @@ export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
     candidateGradeConfirmed: true,
     candidateCity: "Челябинск",
     candidateExperience: "4 года",
+    candidateDescription: "Сварщик 4 разряда. Опыт ручной дуговой и полуавтоматической сварки. Работал на монтаже металлоконструкций.",
     matchPercent: 82,
     vacancyId: 101,
     vacancyTitle: "Оператор ЧПУ",
@@ -1041,7 +1042,7 @@ export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
     shift: "2/2",
     timeline: [
       { id: 1, type: "application_created", author: "Сергей Волков", timestamp: "16 января 2025, 12:00" },
-      { id: 2, type: "status_changed", author: "Анна Смирнова", timestamp: "17 января 2025, 09:30", comment: "Скрининг пройден, приглашаем на собеседование" },
+      { id: 2, type: "status_changed", author: "Анна Смирнова", timestamp: "17 января 2025, 09:30", comment: "Рассмотрение пройдено, приглашаем на собеседование" },
     ],
   },
   {
@@ -1051,6 +1052,7 @@ export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
     candidateGradeConfirmed: true,
     candidateCity: "Екатеринбург",
     candidateExperience: "8 лет",
+    candidateDescription: "Наладчик КИПиА. Опыт работы с PLC Siemens, Schneider Electric. Программирование и пусконаладка автоматизированных линий.",
     matchPercent: 91,
     vacancyId: 102,
     vacancyTitle: "Наладчик оборудования",
@@ -1074,6 +1076,7 @@ export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
     candidateGradeConfirmed: false,
     candidateCity: "Екатеринбург",
     candidateExperience: "3 года",
+    candidateDescription: "Электромонтёр 4 разряда. Обслуживание электрооборудования, работы по допуску электробезопасности II группы.",
     matchPercent: 74,
     vacancyId: 102,
     vacancyTitle: "Наладчик оборудования",
@@ -1097,6 +1100,7 @@ export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
     candidateGradeConfirmed: true,
     candidateCity: "Нижний Тагил",
     candidateExperience: "5 лет",
+    candidateDescription: "Токарь 4 разряда. Опыт работы на токарно-винторезных станках, обработка деталей средней сложности.",
     matchPercent: 80,
     vacancyId: 101,
     vacancyTitle: "Оператор ЧПУ",
@@ -1150,7 +1154,7 @@ export const MOCK_ANALYTICS = {
   funnel: [
     { stage: "Просмотры", count: 523 },
     { stage: "Отклики", count: 31 },
-    { stage: "Скрининг пройден", count: 18 },
+    { stage: "Рассмотрение пройдено", count: 18 },
     { stage: "Собеседование", count: 7 },
     { stage: "Собеседование пройдено", count: 5 },
     { stage: "Найм", count: 3 },
