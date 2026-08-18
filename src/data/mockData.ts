@@ -122,9 +122,6 @@ export const ITR_REQUIREMENTS = [
   "ЕСТД",
   "ГОСТ",
   "Сапр",
-  "Грейд 5",
-  "Грейд 7",
-  "Грейд 8",
 ];
 
 export const CATEGORIES = [
@@ -331,7 +328,7 @@ export const MOCK_VACANCIES: Vacancy[] = [
     rating: 4.8,
     reviewsCount: 48,
     isITR: true,
-    itrRequirements: ["ЕСКД", "ГОСТ", "Сапр", "Грейд 7"],
+    itrRequirements: ["ЕСКД", "ГОСТ", "Сапр"],
   },
 ];
 
@@ -964,6 +961,35 @@ export const MOCK_EMPLOYER_VACANCIES: Vacancy[] = [
   },
 ];
 
+// ─── Тестовые задания (назначаемые работодателем) ────────────────────────────
+export interface AssessmentTemplate {
+  id: number;
+  title: string;
+  type: "test" | "case" | "simulation";
+  duration: string;
+  defaultDeadline: string;
+}
+
+export const MOCK_ASSESSMENT_TEMPLATES: AssessmentTemplate[] = [
+  { id: 1, title: "Тест на 5 разряд — Оператор ЧПУ", type: "test", duration: "45 минут", defaultDeadline: "через 7 дней" },
+  { id: 2, title: "Производственный кейс — Наладка станка", type: "case", duration: "60 минут", defaultDeadline: "через 7 дней" },
+  { id: 3, title: "Тест на 4 разряд — Сварщик", type: "test", duration: "40 минут", defaultDeadline: "через 5 дней" },
+  { id: 4, title: "Тест по охране труда", type: "test", duration: "20 минут", defaultDeadline: "через 3 дня" },
+];
+
+export interface AssignedAssessment {
+  id: number;
+  applicationId: number;
+  candidateName: string;
+  vacancyTitle: string;
+  title: string;
+  type: "test" | "case" | "simulation";
+  duration: string;
+  deadline: string;
+  status: "assigned" | "completed" | "expired";
+  score?: number;
+}
+
 // Отклики на вакансии работодателя
 export interface EmployerApplication {
   id: number;
@@ -983,6 +1009,7 @@ export interface EmployerApplication {
   shift: string;
   interview?: Interview;
   timeline: TimelineEvent[];
+  chatMessages?: { author: "employer" | "candidate"; text: string; time: string }[];
 }
 
 export const MOCK_EMPLOYER_APPLICATIONS: EmployerApplication[] = [
@@ -1157,7 +1184,6 @@ export const MOCK_ANALYTICS = {
     { stage: "Рассмотрение пройдено", count: 18 },
     { stage: "Собеседование", count: 7 },
     { stage: "Собеседование пройдено", count: 5 },
-    { stage: "Найм", count: 3 },
   ],
   // Источники
   sources: [

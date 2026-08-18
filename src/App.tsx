@@ -19,6 +19,7 @@ import { DevelopmentPage } from "@/pages/employee/Development";
 import { ResumeList, ResumeEditor } from "@/pages/employee/Resumes";
 import { NotificationsPage, SettingsPage } from "@/pages/employee/Settings";
 import { EmployeeProfile } from "@/pages/employee/Profile";
+import { CompanyProfilePage } from "@/pages/employee/Company";
 
 // Employer pages
 import { EmployerHome } from "@/pages/employer/Home";
@@ -26,6 +27,7 @@ import { EmployerVacancyList, EmployerVacancyDetail, EmployerVacancyEditor } fro
 import { CandidateList, CandidateDetail } from "@/pages/employer/Candidates";
 import { EmployerApplicationList, EmployerApplicationDetail } from "@/pages/employer/Applications";
 import { AnalyticsPage } from "@/pages/employer/Analytics";
+import { EmployerAssessmentsPage } from "@/pages/employer/Assessments";
 import { CompanyProfile } from "@/pages/employer/Company";
 import { CompanyEdit } from "@/pages/employer/CompanyEdit";
 import { EmployerNotificationsPage, EmployerSettingsPage } from "@/pages/employer/Settings";
@@ -68,6 +70,7 @@ function EmployeeRoutes() {
           <Route index element={<EmployeeHome />} />
           <Route path="vacancies" element={<VacancyList />} />
           <Route path="vacancies/:id" element={<VacancyDetail />} />
+          <Route path="company/:name" element={<CompanyProfilePage />} />
           <Route path="applications" element={<ApplicationList />} />
           <Route path="applications/:id" element={<ApplicationDetail />} />
           <Route path="profile" element={<EmployeeProfile />} />
@@ -129,6 +132,7 @@ function AppInner() {
               <Route path="candidates/:id" element={<CandidateDetail />} />
               <Route path="applications" element={<EmployerApplicationList />} />
               <Route path="applications/:id" element={<EmployerApplicationDetail />} />
+              <Route path="assessments" element={<EmployerAssessmentsPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="company" element={<CompanyProfile />} />
               <Route path="company/edit" element={<CompanyEdit />} />

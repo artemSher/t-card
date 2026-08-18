@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { path: "/employer/vacancies", label: "Вакансии", icon: Icon.Briefcase },
   { path: "/employer/candidates", label: "Кандидаты", icon: Icon.AddUser },
   { path: "/employer/applications", label: "Отклики", icon: Icon.Folder },
+  { path: "/employer/assessments", label: "Тестирование", icon: Icon.Award },
   { path: "/employer/analytics", label: "Аналитика", icon: Icon.Chart },
   { path: "/employer/company", label: "Компания", icon: Icon.Building },
 ];
@@ -26,6 +27,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/employer/vacancies": "Вакансии",
   "/employer/candidates": "Кандидаты",
   "/employer/applications": "Отклики",
+  "/employer/assessments": "Тестирование",
   "/employer/analytics": "Аналитика",
   "/employer/company": "Компания",
   "/employer/settings": "Настройки",

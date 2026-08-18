@@ -4,8 +4,9 @@ import {
   C, F, MOCK_EMPLOYER_APPLICATIONS,
   APPLICATION_STATUS_LABELS, APPLICATION_STATUS_COLORS,
   INTERVIEW_FORMAT_LABELS, INTERVIEW_STATUS_LABELS, INTERVIEW_STATUS_COLORS,
-  TIMELINE_EVENT_LABELS,
+  TIMELINE_EVENT_LABELS, MOCK_ASSESSMENT_TEMPLATES,
 } from "@/data/mockData";
+import type { AssignedAssessment } from "@/data/mockData";
 import { Icon } from "@/components/icons/Icons";
 import { Card, GreenBtn, OutlineBtn, StatusBadge, EmptyState, SectionHeader, Chip, ProgressBar, Input, Select } from "@/components/ui";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -127,8 +128,13 @@ export function EmployerApplicationDetail() {
 
   // Chat state
   const [showChat, setShowChat] = useState(false);
-  const [chatMessages, setChatMessages] = useState<{ author: "employer" | "candidate"; text: string; time: string }[]>([]);
   const [chatInput, setChatInput] = useState("");
+
+  // Assigned assessments (test tasks)
+  const [assignedAssessments, setAssignedAssessments] = useLocalStorage<AssignedAssessment[]>("tcard:employer:assignedAssessments", []);
+  const [showAssessmentForm, setShowAssessmentForm] = useState(false);
+  const [assessmentTemplateId, setAssessmentTemplateId] = useState<string>(String(MOCK_ASSESSMENT_TEMPLATES[0]?.id ?? ""));
+  const [assessmentDeadline, setAssessmentDeadline] = useState("");
 
   if (!app) {
     return <EmptyState icon="🔍" title="Отклик не найден" subtitle="Возможно, данные были удалены" />;
@@ -158,6 +164,7 @@ export function EmployerApplicationDetail() {
 
   function sendInvite() {
     const comment = inviteComment.trim() || "Приглашение на собеседование";
+    const time = new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
     updateApp(a => ({
       ...a,
       status: "invitation",
@@ -168,11 +175,40 @@ export function EmployerApplicationDetail() {
         timestamp: new Date().toLocaleString("ru-RU"),
         comment,
       }],
+      chatMessages: [...(a.chatMessages ?? []), { author: "employer", text: comment, time }],
     }));
     setShowInviteForm(false);
     setInviteComment("");
     setShowChat(true);
-    setChatMessages([{ author: "employer", text: comment, time: new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }) }]);
+  }
+
+  function assignAssessment() {
+    const template = MOCK_ASSESSMENT_TEMPLATES.find(t => t.id === Number(assessmentTemplateId));
+    if (!template) return;
+    const newAssessment: AssignedAssessment = {
+      id: Date.now(),
+      applicationId: app!.id,
+      candidateName: app!.candidateName,
+      vacancyTitle: app!.vacancyTitle,
+      title: template.title,
+      type: template.type,
+      duration: template.duration,
+      deadline: assessmentDeadline || template.defaultDeadline,
+      status: "assigned",
+    };
+    setAssignedAssessments(prev => [newAssessment, ...prev]);
+    updateApp(a => ({
+      ...a,
+      timeline: [...a.timeline, {
+        id: Date.now(),
+        type: "status_changed",
+        author: "Анна Смирнова",
+        timestamp: new Date().toLocaleString("ru-RU"),
+        comment: `Назначено тестовое задание: ${template.title}`,
+      }],
+    }));
+    setShowAssessmentForm(false);
+    setAssessmentDeadline("");
   }
 
   function scheduleInterview() {
@@ -219,9 +255,14 @@ export function EmployerApplicationDetail() {
   function sendChatMessage() {
     if (!chatInput.trim()) return;
     const time = new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
-    setChatMessages(prev => [...prev, { author: "employer", text: chatInput.trim(), time }]);
+    updateApp(a => ({
+      ...a,
+      chatMessages: [...(a.chatMessages ?? []), { author: "employer", text: chatInput.trim(), time }],
+    }));
     setChatInput("");
   }
+
+  const candidateAssessments = assignedAssessments.filter(a => a.applicationId === app.id);
 
   const interview = app.interview;
 
@@ -468,7 +509,7 @@ export function EmployerApplicationDetail() {
           />
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ maxHeight: 300, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, padding: "4px 0" }}>
-              {chatMessages.map((msg, i) => (
+              {(app.chatMessages ?? []).map((msg, i) => (
                 <div key={i} style={{
                   alignSelf: msg.author === "employer" ? "flex-end" : "flex-start",
                   maxWidth: "80%",
@@ -498,6 +539,55 @@ export function EmployerApplicationDetail() {
               <GreenBtn label="Отправить" onClick={sendChatMessage} disabled={!chatInput.trim()} />
             </div>
           </div>
+        </Card>
+      )}
+
+      {/* Тестовое задание */}
+      {(app.status === "pending" || app.status === "invitation") && (
+        <Card>
+          <SectionHeader
+            title="Тестовое задание"
+            action={
+              !showAssessmentForm && (
+                <button onClick={() => setShowAssessmentForm(true)} style={{
+                  background: "none", border: "none", cursor: "pointer",
+                  color: C.green, fontFamily: F.regular, fontSize: 14,
+                }}>Назначить</button>
+              )
+            }
+          />
+          {candidateAssessments.length === 0 && !showAssessmentForm && (
+            <div style={{ fontFamily: F.regular, fontSize: 14, color: C.sub }}>
+              Тестовое задание не назначено. Это необязательный шаг перед собеседованием.
+            </div>
+          )}
+          {candidateAssessments.map(a => (
+            <div key={a.id} style={{
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+              background: C.bg, borderRadius: 14, padding: "12px 16px", marginBottom: 8,
+            }}>
+              <div>
+                <div style={{ fontFamily: F.semi, fontSize: 14, color: C.text }}>{a.title}</div>
+                <div style={{ fontFamily: F.regular, fontSize: 12, color: C.sub, marginTop: 2 }}>{a.duration} · Срок: {a.deadline}</div>
+              </div>
+              <StatusBadge label={a.status === "completed" ? "Пройден" : a.status === "expired" ? "Истёк" : "Назначен"} color={a.status === "completed" ? C.green : a.status === "expired" ? C.red : C.amber} />
+            </div>
+          ))}
+          {showAssessmentForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: candidateAssessments.length ? 12 : 0 }}>
+              <Select
+                label="Тестовое задание"
+                value={assessmentTemplateId}
+                onChange={setAssessmentTemplateId}
+                options={MOCK_ASSESSMENT_TEMPLATES.map(t => ({ value: String(t.id), label: t.title }))}
+              />
+              <Input label="Срок выполнения" value={assessmentDeadline} onChange={setAssessmentDeadline} placeholder="через 7 дней" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <GreenBtn label="Назначить" full onClick={assignAssessment} />
+                <OutlineBtn label="Отмена" onClick={() => setShowAssessmentForm(false)} />
+              </div>
+            </div>
+          )}
         </Card>
       )}
 

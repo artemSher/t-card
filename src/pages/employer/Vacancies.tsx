@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { C, F, MOCK_EMPLOYER_VACANCIES, SPECIALTIES, CATEGORIES, ADMISSIONS, SHIFTS, GRADES, MOCK_COMPANY, VACANCY_STATUS_LABELS, VACANCY_STATUS_COLORS, MOCK_VACANCY_TEMPLATES } from "@/data/mockData";
+import { C, F, MOCK_EMPLOYER_VACANCIES, CATEGORIES, SHIFTS, MOCK_COMPANY, VACANCY_STATUS_LABELS, VACANCY_STATUS_COLORS, MOCK_VACANCY_TEMPLATES } from "@/data/mockData";
 import { Icon } from "@/components/icons/Icons";
 import { Card, GreenBtn, OutlineBtn, StatusBadge, EmptyState, SectionHeader, Input, Select, Chip, SuccessScreen } from "@/components/ui";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -374,12 +374,20 @@ export function EmployerVacancyEditor() {
   const [department, setDepartment] = useState(existing?.department ?? MOCK_COMPANY.departments[0]);
   const [description, setDescription] = useState(existing?.description ?? "");
   const [admissions, setAdmissions] = useState<string[]>(existing?.admissions ?? []);
+  const [requirementInput, setRequirementInput] = useState("");
   const [vacancyStatus, setVacancyStatus] = useState<VacancyStatus>(existing?.vacancyStatus ?? "draft");
   const [saved, setSaved] = useState(false);
   const [savedAsTemplate, setSavedAsTemplate] = useState(false);
 
-  function toggleAdmission(a: string) {
-    setAdmissions(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a]);
+  function addRequirement() {
+    const value = requirementInput.trim();
+    if (!value || admissions.includes(value)) return;
+    setAdmissions(prev => [...prev, value]);
+    setRequirementInput("");
+  }
+
+  function removeRequirement(value: string) {
+    setAdmissions(prev => prev.filter(x => x !== value));
   }
 
   function handleSave() {
@@ -477,16 +485,39 @@ export function EmployerVacancyEditor() {
           <Input label="Подразделение" value={department} onChange={setDepartment} placeholder="Введите название подразделения" />
 
           <div>
-            <div style={{ fontFamily: F.semi, fontSize: 14, color: C.text, marginBottom: 10 }}>Допуски</div>
+            <div style={{ fontFamily: F.semi, fontSize: 14, color: C.text, marginBottom: 10 }}>Требования к кандидату</div>
+            <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+              <input
+                value={requirementInput}
+                onChange={e => setRequirementInput(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addRequirement(); } }}
+                placeholder="Например: Электробезопасность II группы"
+                style={{
+                  flex: 1, padding: "12px 16px", background: C.bg,
+                  border: `1px solid ${C.border}`, borderRadius: 14,
+                  fontFamily: F.regular, fontSize: 15, color: C.text, outline: "none",
+                }}
+              />
+              <OutlineBtn label="Добавить" onClick={addRequirement} />
+            </div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {ADMISSIONS.map(a => (
-                <button key={a} onClick={() => toggleAdmission(a)} style={{
-                  padding: "8px 14px", borderRadius: 20, border: "none", cursor: "pointer",
-                  background: admissions.includes(a) ? `${C.green}15` : C.chip,
-                  color: admissions.includes(a) ? C.green : C.text,
-                  fontFamily: F.regular, fontSize: 13, transition: "all 0.15s",
-                }}>{a}</button>
+              {admissions.map(a => (
+                <span key={a} style={{
+                  display: "flex", alignItems: "center", gap: 6,
+                  padding: "8px 10px 8px 14px", borderRadius: 20,
+                  background: `${C.green}15`, color: C.green,
+                  fontFamily: F.regular, fontSize: 13,
+                }}>
+                  {a}
+                  <button onClick={() => removeRequirement(a)} style={{
+                    background: "none", border: "none", cursor: "pointer",
+                    color: C.green, fontSize: 14, lineHeight: 1, padding: 0,
+                  }}>×</button>
+                </span>
               ))}
+              {admissions.length === 0 && (
+                <span style={{ fontFamily: F.regular, fontSize: 13, color: C.sub }}>Требования не добавлены</span>
+              )}
             </div>
           </div>
 

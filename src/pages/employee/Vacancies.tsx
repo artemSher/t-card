@@ -205,7 +205,7 @@ export function VacancyDetail() {
       </Card>
 
       {/* Компания */}
-      <Card>
+      <Card onClick={() => navigate(`/employee/company/${encodeURIComponent(job.company)}`)}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <div style={{ fontFamily: F.semi, fontSize: 17, color: C.text, marginBottom: 6 }}>{job.company}</div>
@@ -216,6 +216,7 @@ export function VacancyDetail() {
               </span>
             </div>
           </div>
+          <Icon.ChevronRight size={18} color={C.sub} />
         </div>
       </Card>
 
