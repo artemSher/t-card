@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { C, F, MOCK_COMPANY } from "@/data/mockData";
 import { Icon } from "@/components/icons/Icons";
-import { Card, GreenBtn, OutlineBtn, SectionHeader, Input, SuccessScreen } from "@/components/ui";
+import { Card, GreenBtn, OutlineBtn, SectionHeader, Input, SuccessScreen, TextArea } from "@/components/ui";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import type { Company } from "@/types";
 
@@ -13,10 +13,11 @@ export function CompanyEdit() {
   const [inn, setInn] = useState(company.inn);
   const [industry, setIndustry] = useState(company.industry);
   const [address, setAddress] = useState(company.address);
+  const [description, setDescription] = useState(company.description ?? "");
   const [saved, setSaved] = useState(false);
 
   function handleSave() {
-    setCompany(prev => ({ ...prev, name, inn, industry, address }));
+    setCompany(prev => ({ ...prev, name, inn, industry, address, description }));
     setSaved(true);
   }
 
@@ -52,6 +53,7 @@ export function CompanyEdit() {
           <Input label="ИНН" value={inn} onChange={setInn} placeholder="ИНН" type="tel" />
           <Input label="Отрасль" value={industry} onChange={setIndustry} placeholder="Отрасль" />
           <Input label="Адрес" value={address} onChange={setAddress} placeholder="Адрес" />
+          <TextArea label="Описание компании" value={description} onChange={setDescription} placeholder="Расскажите о вашей компании: чем занимаетесь, сколько лет на рынке, какие ценности разделяете..." rows={5} />
         </div>
       </Card>
 

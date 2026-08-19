@@ -24,7 +24,7 @@ const STATUS_FILTERS: { key: ApplicationStatus | "all"; label: string }[] = [
 // ─── Список откликов ─────────────────────────────────────────────────────────
 export function EmployerApplicationList() {
   const navigate = useNavigate();
-  const [apps, setApps] = useLocalStorage<EmployerApplication[]>("tcard:employer:applications", MOCK_EMPLOYER_APPLICATIONS);
+  const [apps, setApps] = useLocalStorage<EmployerApplication[]>("tcard:employer:applications:v2", MOCK_EMPLOYER_APPLICATIONS);
   const [filter, setFilter] = useState<ApplicationStatus | "all">("all");
 
   const filtered = filter === "all" ? apps : apps.filter(a => a.status === filter);
@@ -109,7 +109,7 @@ export function EmployerApplicationList() {
 export function EmployerApplicationDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [apps, setApps] = useLocalStorage<EmployerApplication[]>("tcard:employer:applications", MOCK_EMPLOYER_APPLICATIONS);
+  const [apps, setApps] = useLocalStorage<EmployerApplication[]>("tcard:employer:applications:v2", MOCK_EMPLOYER_APPLICATIONS);
   const app = apps.find(a => a.id === Number(id));
 
   // Interview form state

@@ -139,8 +139,7 @@ export type ApplicationStatus =
   | "pending"
   | "invitation"
   | "interview"
-  | "rejected"
-  | "hired";
+  | "rejected";
 
 export interface Application {
   id: number;
@@ -286,6 +285,7 @@ export interface Company {
   verified: boolean;
   rating: number;
   reviewsCount: number;
+  description?: string;
 }
 
 // ─── User ───────────────────────────────────────────────────────────────────

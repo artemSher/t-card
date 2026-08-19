@@ -34,7 +34,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useLocalStorage<User>("tcard:user", DEFAULT_USER);
   const [settings, setSettings] = useLocalStorage<AppSettings>("tcard:settings", DEFAULT_SETTINGS);
   const [bookmarks, setBookmarks] = useLocalStorage<number[]>("tcard:bookmarks", [1, 3]);
-  const [applications, setApplications] = useLocalStorage<Application[]>("tcard:applications", MOCK_APPLICATIONS);
+  const [applications, setApplications] = useLocalStorage<Application[]>("tcard:applications:v2", MOCK_APPLICATIONS);
   const [resumes, setResumes] = useLocalStorage<Resume[]>("tcard:resumes", MOCK_RESUMES);
   const [savedSearches, setSavedSearches] = useLocalStorage<SavedSearch[]>("tcard:savedSearches", MOCK_SAVED_SEARCHES);
 

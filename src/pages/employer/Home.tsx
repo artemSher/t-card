@@ -64,7 +64,6 @@ export function EmployerHome() {
                   <div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <span style={{ fontFamily: F.semi, fontSize: 16, color: C.text }}>{app.candidateName}</span>
-                      {app.candidateGradeConfirmed && <Icon.Verified size={16} />}
                     </div>
                     <div style={{ fontFamily: F.regular, fontSize: 13, color: C.sub, marginTop: 4 }}>
                       {app.vacancyTitle} · {app.candidateExperience}
@@ -164,7 +163,6 @@ export function EmployerHome() {
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontFamily: F.semi, fontSize: 18, color: "white" }}>{MOCK_COMPANY.name}</span>
-              {MOCK_COMPANY.verified && <Icon.Verified size={18} />}
             </div>
             <div style={{ fontFamily: F.regular, fontSize: 13, color: "rgba(255,255,255,0.8)", marginTop: 4 }}>
               {MOCK_COMPANY.industry} · Рейтинг {MOCK_COMPANY.rating}

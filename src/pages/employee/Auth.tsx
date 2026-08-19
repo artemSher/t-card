@@ -6,7 +6,6 @@ import { GreenBtn, OutlineBtn, Input } from "@/components/ui";
 import { AuthLayout } from "@/components/layout/AuthLayout";
 import { useApp } from "@/context/AppContext";
 import type { User } from "@/types";
-import logoSvg from "@/assets/logo.svg";
 
 // ─── Выбор роли ──────────────────────────────────────────────────────────────
 export function RoleSelection() {
@@ -27,9 +26,6 @@ export function RoleSelection() {
 
       {/* Контент */}
       <div style={{ position: "relative", textAlign: "center", maxWidth: 640, width: "100%" }}>
-        {/* Логотип */}
-        <img src={logoSvg} alt="Т-Card" style={{ width: 88, height: 88, marginBottom: 28, boxShadow: "0 12px 40px rgba(0,0,0,0.2)" }} />
-
         {/* Название */}
         <div style={{
           fontFamily: F.bold, fontSize: 52, color: "white", letterSpacing: "-1.2px",

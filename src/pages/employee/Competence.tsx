@@ -56,7 +56,6 @@ export function CompetenceProfile() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontFamily: F.regular, fontSize: 14, color: C.text }}>{c.name}</span>
-                  {c.confirmed && <Icon.Verified />}
                 </div>
                 <span style={{ fontFamily: F.semi, fontSize: 14, color: c.score >= 80 ? C.green : C.amber }}>{c.score}</span>
               </div>

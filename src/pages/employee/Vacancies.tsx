@@ -173,7 +173,6 @@ export function VacancyDetail() {
             <div style={{ fontFamily: F.semi, fontSize: 22, color: C.text, lineHeight: "28px", marginBottom: 6 }}>{job.title}</div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontFamily: F.regular, fontSize: 14, color: C.sub }}>{job.company}</span>
-              <Icon.Verified />
             </div>
           </div>
           <button onClick={() => toggleBookmark(job.id)} style={{

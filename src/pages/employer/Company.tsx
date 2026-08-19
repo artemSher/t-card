@@ -35,7 +35,6 @@ export function CompanyProfile() {
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontFamily: F.bold, fontSize: 22, color: "white" }}>{MOCK_COMPANY.name}</span>
-              {MOCK_COMPANY.verified && <Icon.Verified size={20} />}
             </div>
             <div style={{ fontFamily: F.regular, fontSize: 14, color: "rgba(255,255,255,0.8)", marginTop: 4 }}>
               {company.industry}
@@ -59,10 +58,17 @@ export function CompanyProfile() {
         <KPITile value="3" label="Активных вакансий" color={C.green} />
         <KPITile value="31" label="Откликов" color={C.amber} />
         <KPITile value="523" label="Просмотров" color={C.blue} />
-        <KPITile value="3" label="Наймов" color={C.green} />
       </div>
 
       {/* Информация */}
+      <Card>
+        <SectionHeader title="О компании" />
+        <div style={{ fontFamily: F.regular, fontSize: 14, color: C.muted, lineHeight: "22px" }}>
+          {company.description || "Описание компании не заполнено. Добавьте его в редакторе профиля."}
+        </div>
+      </Card>
+
+      {/* Реквизиты */}
       <Card>
         <SectionHeader title="Реквизиты" />
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -105,25 +111,6 @@ export function CompanyProfile() {
         )}
         <div style={{ marginTop: 14 }}>
           <OutlineBtn label="Добавить подразделение" icon={<Icon.Plus size={16} />} onClick={() => setShowAddDept(!showAddDept)} />
-        </div>
-      </Card>
-
-      {/* Верификация */}
-      <Card>
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{
-            width: 48, height: 48, background: `${C.green}14`, borderRadius: 12,
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            <Icon.Verified size={24} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: F.semi, fontSize: 15, color: C.text }}>Компания верифицирована</div>
-            <div style={{ fontFamily: F.regular, fontSize: 13, color: C.sub }}>
-              Подтверждены реквизиты и право деятельности
-            </div>
-          </div>
-          <Icon.CheckCircle size={24} color={C.green} />
         </div>
       </Card>
 

@@ -1,13 +1,16 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { C, F, MOCK_VACANCIES } from "@/data/mockData";
+import { C, F, MOCK_VACANCIES, MOCK_COMPANY } from "@/data/mockData";
 import { Icon } from "@/components/icons/Icons";
 import { Card, Chip, EmptyState, SectionHeader } from "@/components/ui";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import type { Company } from "@/types";
 
 export function CompanyProfilePage() {
   const { name } = useParams();
   const navigate = useNavigate();
   const companyName = decodeURIComponent(name ?? "");
+  const [employerCompany] = useLocalStorage<Company>("tcard:employer:company", MOCK_COMPANY);
 
   const vacancies = MOCK_VACANCIES.filter(v => v.company === companyName);
 
@@ -16,6 +19,7 @@ export function CompanyProfilePage() {
   }
 
   const { rating, reviewsCount, city } = vacancies[0];
+  const description = employerCompany.name === companyName ? employerCompany.description : undefined;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -38,7 +42,6 @@ export function CompanyProfilePage() {
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontFamily: F.semi, fontSize: 20, color: C.text }}>{companyName}</span>
-              <Icon.Verified />
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
               {[...Array(5)].map((_, i) => <Icon.Star key={i} />)}
@@ -53,6 +56,16 @@ export function CompanyProfilePage() {
           <span style={{ fontFamily: F.regular, fontSize: 14, color: C.green }}>{city}</span>
         </div>
       </Card>
+
+      {/* Описание компании */}
+      {description && (
+        <Card>
+          <SectionHeader title="О компании" />
+          <div style={{ fontFamily: F.regular, fontSize: 14, color: C.muted, lineHeight: "22px" }}>
+            {description}
+          </div>
+        </Card>
+      )}
 
       {/* Открытые вакансии */}
       <Card>

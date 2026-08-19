@@ -792,7 +792,6 @@ export const APPLICATION_STATUS_LABELS: Record<string, string> = {
   invitation: "Приглашение",
   interview: "Собеседование",
   rejected: "Отклонено",
-  hired: "Нанят",
 };
 
 export const APPLICATION_STATUS_COLORS: Record<string, string> = {
@@ -800,7 +799,6 @@ export const APPLICATION_STATUS_COLORS: Record<string, string> = {
   invitation: C.green,
   interview: C.blue,
   rejected: C.red,
-  hired: C.green,
 };
 
 // ─── Статусы вакансий ────────────────────────────────────────────────────────
@@ -863,7 +861,6 @@ export const TIMELINE_EVENT_LABELS: Record<string, string> = {
   interview_no_show: "Кандидат не явился",
   interview_cancelled: "Собеседование отменено",
   interview_completed: "Собеседование завершено",
-  hired: "Кандидат нанят",
   rejected: "Отклонено",
   comment: "Комментарий",
 };
@@ -1157,6 +1154,7 @@ export const MOCK_COMPANY = {
   verified: true,
   rating: 4.8,
   reviewsCount: 48,
+  description: "ПромТех Решения — машиностроительное предприятие, специализирующееся на производстве и обслуживании промышленного оборудования. Мы работаем с 2009 года, оснащены современными станками с ЧПУ и имеем собственное конструкторское бюро. Наша команда — это опытные специалисты, которые ценят качество и безопасность труда.",
 };
 
 // Аналитика

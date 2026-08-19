@@ -113,6 +113,26 @@ export function Input({ label, value, onChange, placeholder, type, error }: {
   );
 }
 
+// ─── TextArea ────────────────────────────────────────────────────────────────
+export function TextArea({ label, value, onChange, placeholder, rows }: {
+  label?: string; value: string; onChange: (v: string) => void;
+  placeholder?: string; rows?: number;
+}) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      {label && <label style={{ fontFamily: F.regular, fontSize: 13, color: C.sub }}>{label}</label>}
+      <textarea
+        value={value} placeholder={placeholder} rows={rows ?? 4} onChange={e => onChange(e.target.value)}
+        style={{
+          background: "white", border: `1px solid ${C.border}`, borderRadius: 14,
+          padding: "12px 16px", fontFamily: F.regular, fontSize: 15, color: C.text,
+          outline: "none", transition: "border-color 0.15s", resize: "vertical",
+        }}
+      />
+    </div>
+  );
+}
+
 // ─── Select ──────────────────────────────────────────────────────────────────
 export function Select({ label, value, onChange, options }: {
   label?: string; value: string; onChange: (v: string) => void; options: { value: string; label: string }[];
